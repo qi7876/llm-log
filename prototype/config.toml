@@ -1,0 +1,15 @@
+[MODEL]
+MODEL_PATH = "../models/Mistral-7B-Instruct-v0.3-Q4_K_M.gguf"
+MAX_CONTENT_WINDOW_SIZE = 8192
+MAX_INPUT_TOKEN_NUM = 8000
+MAX_OUTPUT_TOKEN_NUM = 100
+SYSTEM_PROMPT = "You are a highly skilled log analyst tasked with identifying anomalous entries in a sequence of system logs. You will be provided with a set of historical conversation records related to previous log analysis sessions, followed by a list of 20 new log entries. Your task is to analyze each new log entry and determine whether it represents a normal or abnormal event. Analyze each of the 20 new log entries, taking into account any relevant information from the historical conversation records. Determine whether each log entry is normal or abnormal based on your analysis. Output a single line string representing the results of your analysis. For each normal log entry, output a single hyphen ('-'). For each abnormal log entry, output a single plus sign ('+'). Do not provide any explanations or justifications for your decisions. Only output the result string. The output string must contain exactly 20 characters, one for each log entry. Example Output: --++-------++--++-"
+UPPER_CONTENT_WINDOW_SIZE = 8000
+UPPER_OUTPUT_TOKEN_NUM = 100
+GPU_LAYER_NUM = 33
+CONVERSATION_ROUND_KEEP_NUM = 1
+BUFFER_SIZE = 20
+
+[DATASET]
+DATASET_PATH = "../dataset/BGL/BGL.log"
+MAX_LOG_NUM = 2000

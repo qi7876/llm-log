@@ -1,5 +1,6 @@
 # For this project
 models
+dataset
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
