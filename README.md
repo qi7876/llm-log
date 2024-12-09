@@ -10,6 +10,9 @@ We want to apply LLM to anomaly detection in logs.
 ## ⚙️Config
 
 ```toml
+[DEBUG]
+VERBOSE = false
+
 [MODEL]
 MODEL_PATH = "path/to/your/gguf_model"
 MAX_CONTENT_WINDOW_SIZE = 4096
@@ -27,4 +30,3 @@ BUFFER_SIZE = 1
 DATASET_PATH = "path/to/your/dataset"
 MAX_LOG_NUM = 2000
 ```
-
