@@ -7,33 +7,35 @@ class LogLLM:
         self,
         modelPath,
         maxContentWindowSize,
-        maxInputTokenNum,
-        maxOutputTokenNum,
-        systemPrompt,
+        template,
         upperContentWindowSize,
         upperOutputTokenNum,
         gpuLayerNum=0,
         roundKeepNum=20,
+        verbose=False,
     ) -> None:
         self.llm = Llama(
             model_path=modelPath,
             n_ctx=maxContentWindowSize,
-            max_context_tokens=maxInputTokenNum,
-            max_tokens=maxOutputTokenNum,
             n_gpu_layers=gpuLayerNum,
+            verbose=verbose,
         )
 
+        self.verbose = verbose
         # Use prompt to limit the content return by LLM.
-        self.systemPrompt = systemPrompt
+        self.template = template
         self.upperContentWindowSize = upperContentWindowSize
-        self.fixedTokenNum = upperOutputTokenNum + self.getTokenNum(self.systemPrompt)
+        self.fixedTokenNum = upperOutputTokenNum + self.getTokenNum(self.template)
         self.maxContentWindowSize = maxContentWindowSize
         # Record the history of conversation.
+        self.roundKeepNum = roundKeepNum
         self.conversationHistory = deque(maxlen=roundKeepNum * 2)
         self.historyTokenNumCount = 0
 
     def chat(self, message) -> str:
-        userMessage = "User: " + message
+        userMessage = "User: "
+        for _, value in message.items():
+            userMessage += value
         userMessageTokenNum = self.getTokenNum(userMessage)
 
         # Check if the total token number exceeds the limit.
@@ -46,17 +48,22 @@ class LogLLM:
                 break
             self.deletHistory()
 
-        # Build the final input for LLM.
-        finalInput = (
-            "**System Prompot**\n" + self.systemPrompt + "\n" + "**History Contents**\n"
-        )
-        for msg in self.conversationHistory:
-            finalInput += msg + "\n"
-        finalInput += "**New Logs**\n" + userMessage
+        input = self.buildPrompt(message)
 
-        output = self.llm(finalInput, stop=["User:", "\n"])
+        if self.verbose:
+            print("\n=========================================================")
+            print(f"[Input]: {input}")
+            print("\n=========================================================")
+            print(f"[Input Token Num]: {self.getTokenNum(input)}")
+            print("=========================================================\n")
+
+        output = self.llm(input)
         response = output["choices"][0]["text"].strip()
-        print(f"Response: {response}")
+
+        if self.verbose:
+            print("\n=========================================================")
+            print(f"Response: {response}")
+            print("=========================================================\n")
 
         # Add new conversation to the history.
         assistantResponse = "Assistant: " + response
@@ -66,6 +73,22 @@ class LogLLM:
         self.historyTokenNumCount += userMessageTokenNum + responseTokenNum + 2
 
         return response
+
+    def buildPrompt(self, message):
+        input = self.template
+
+        # Replace the placeholder in the template with the message.
+        for key, value in message.items():
+            input = input.replace("{" + key + "}", value)
+
+        # Add history to input.
+        if self.roundKeepNum != 0:
+            history = ""
+            for msg in self.conversationHistory:
+                history += msg + "\n"
+            input = input.replace("{history}", history)
+
+        return input
 
     def deletHistory(self) -> None:
         if self.conversationHistory:

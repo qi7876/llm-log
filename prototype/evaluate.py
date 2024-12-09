@@ -1,59 +1,75 @@
-import re
+def calculateAccuracyAndRecall(groundTruthFile, predictionFile):
+    try:
+        with open(groundTruthFile, "r") as fGt, open(predictionFile, "r") as fPred:
+            gtLines = fGt.readlines()
+            predLines = fPred.readlines()
 
+            # if len(gtLines) != len(predLines):
+            #     print(
+            #         "Error: Number of lines in ground truth and prediction files do not match."
+            #     )
+            #     return None
 
-class Evaluate:
-    def __init__(self):
-        self._res_list = []
+            truePositives = 0
+            trueNegatives = 0
+            falsePositives = 0
+            falseNegatives = 0
 
-    def _put_res(self, true_label: bool, predict_label: int):
-        self._res_list.append([true_label, predict_label])
+            # for i in range(len(gtLines)):
+            for i in range(602):
+                gtLabel = gtLines[i].strip()
+                predLabel = predLines[i].strip()
 
-    def extract_and_record_result(self, label: str, output: str, log_type: str, output_pattern: str):
-        if label is None or output is None:
-            raise Exception("Label or Output is none.")
-        match log_type:
-            case 'BGL':
-                if label == '-':
-                    true_label = False
+                # Ground Truth: Normal (-)
+                if gtLabel.startswith("- "):
+                    if "-" in predLabel:
+                        trueNegatives += 1
+                    elif "+" in predLabel:
+                        falsePositives += 1
+                    else:
+                        print(
+                            f"Error: Invalid prediction label at line {i+1}: {predLabel}"
+                        )
+                        return None
+
+                # Ground Truth: Abnormal (no prefix)
                 else:
-                    true_label = True
-            case _:
-                raise Exception("Unknown Log Type.")
-        if re.search(output_pattern, output):
-            match_res = re.search(output_pattern, output).groups()[0]
-            match match_res:
-                case 'Yes' | 'yes':
-                    predict_label = 1
-                case 'No' | 'no':
-                    predict_label = 0
-                case 'Uncertain' | 'uncertain':
-                    predict_label = -1
-                case _:
-                    raise Exception('Unknown predict result.')
-        else:
-            raise Exception('Not a right LLM output.')
-        self._put_res(true_label, predict_label)
+                    if "+" in predLabel:
+                        truePositives += 1
+                    elif "-" in predLabel:
+                        falseNegatives += 1
+                    else:
+                        print(
+                            f"Error: Invalid prediction label at line {i+1}: {predLabel}"
+                        )
+                        return None
 
-    def get_evaluate_data(self):
-        TP, FP, TN, FN, PU, NU = 0, 0, 0, 0, 0, 0
-        for data in self._res_list:
-            match data:
-                case [True, 1]:
-                    TP += 1
-                case [True, 0]:
-                    FN += 1
-                case [False, 1]:
-                    FP += 1
-                case [False, 0]:
-                    TN += 1
-                case [True, -1]:
-                    PU += 1
-                case [False, -1]:
-                    NU += 1
+            accuracy = (
+                (truePositives + trueNegatives) / len(gtLines)
+                if len(gtLines) > 0
+                else 0
+            )
+            recall = (
+                truePositives / (truePositives + falseNegatives)
+                if (truePositives + falseNegatives) > 0
+                else 0
+            )
 
-        print(f"Test is over. TP:{TP} FP:{FP} TN:{TN} FN:{FN} PU:{PU} NU:{NU}")
-        if TP != 0:
-            Precision = float(TP) / float(TP + FP)
-            Recall = float(TP) / float(TP + FN)
-            print(f"Precision:{Precision} Recall:{Recall}")
+            return {"accuracy": accuracy, "recall": recall}
 
+    except FileNotFoundError:
+        print("Error: One or both of the files were not found.")
+        return None
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
+
+
+groundTruthPath = "../dataset/BGL_2k.log"
+predictionPath = "../test/output.txt"
+
+results = calculateAccuracyAndRecall(groundTruthPath, predictionPath)
+
+if results:
+    print(f"Accuracy: {results['accuracy']:.4f}")
+    print(f"Recall: {results['recall']:.4f}")
