@@ -1,6 +1,7 @@
 # For this project
 models
 dataset
+output.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
