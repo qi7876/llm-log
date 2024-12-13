@@ -1,13 +1,13 @@
-def loadDataset(datasetPath, maxLogNum) -> list[str]:
-    logList = []
-    logCount = 0
-    with open(datasetPath, "r") as file:
+def loadDataset(dataset_path, num_max_logs) -> list[str]:
+    log_list = []
+    log_count = 0
+    with open(dataset_path, "r") as file:
         for line in file:
-            if logCount >= maxLogNum:
+            if log_count >= num_max_logs:
                 break
             if line.startswith("- "):
                 line = line[2:]
-            logList.append(line)
-            logCount += 1
+            log_list.append(line)
+            log_count += 1
 
-    return logList
+    return log_list
