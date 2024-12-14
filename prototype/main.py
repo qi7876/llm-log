@@ -14,58 +14,58 @@ VERBOSE = config["DEBUG"]["VERBOSE"]
 
 # Model related
 MODEL_PATH = config["MODEL"]["MODEL_PATH"]
-MAX_CONTENT_WINDOW_SIZE = config["MODEL"]["MAX_CONTENT_WINDOW_SIZE"]
+NUM_MAX_CONTENT_TOKENS = config["MODEL"]["NUM_MAX_CONTENT_TOKENS"]
 TEMPLATE = config["MODEL"]["TEMPLATE"]
-UPPER_CONTENT_WINDOW_SIZE = config["MODEL"]["UPPER_CONTENT_WINDOW_SIZE"]
-UPPER_OUTPUT_TOKEN_NUM = config["MODEL"]["UPPER_OUTPUT_TOKEN_NUM"]
-GPU_LAYER_NUM = config["MODEL"]["GPU_LAYER_NUM"]
-CONVERSATION_ROUND_KEEP_NUM = config["MODEL"]["CONVERSATION_ROUND_KEEP_NUM"]
-BUFFER_SIZE = config["MODEL"]["BUFFER_SIZE"]
+NUM_UPPER_CONTENT_TOKENS = config["MODEL"]["NUM_UPPER_CONTENT_TOKENS"]
+NUM_UPPER_OUTPUT_TOKENS = config["MODEL"]["NUM_UPPER_OUTPUT_TOKENS"]
+NUM_GPU_LAYERS = config["MODEL"]["NUM_GPU_LAYERS"]
+NUM_CONVERSATION_KEEP_ROUNDS = config["MODEL"]["NUM_CONVERSATION_KEEP_ROUNDS"]
+NUM_BUFFER_SIZE = config["MODEL"]["NUM_BUFFER_SIZE"]
 
 # Dataset related
 DATASET_PATH = config["DATASET"]["DATASET_PATH"]
-MAX_LOG_NUM = config["DATASET"]["MAX_LOG_NUM"]
+NUM_MAX_LOGS = config["DATASET"]["NUM_MAX_LOGS"]
 
-buffer = deque(maxlen=BUFFER_SIZE)
-totalLogCount = 0
-bufferLogCount = 0
-lastCheckTime = time.time()
-currentTime = time.time()
+buffer = deque(maxlen=NUM_BUFFER_SIZE)
+total_log_count = 0
+buffer_log_count = 0
+last_check_time = time.time()
+current_time = time.time()
 
-logList = loadDataset(DATASET_PATH, MAX_LOG_NUM)
+log_list = loadDataset(DATASET_PATH, NUM_MAX_LOGS)
 
 logLLM = LogLLM(
-    modelPath=MODEL_PATH,
-    maxContentWindowSize=MAX_CONTENT_WINDOW_SIZE,
+    model_path=MODEL_PATH,
+    num_max_content_tokens=NUM_MAX_CONTENT_TOKENS,
     template=TEMPLATE,
-    upperContentWindowSize=UPPER_CONTENT_WINDOW_SIZE,
-    upperOutputTokenNum=UPPER_OUTPUT_TOKEN_NUM,
-    gpuLayerNum=GPU_LAYER_NUM,
-    roundKeepNum=CONVERSATION_ROUND_KEEP_NUM,
+    num_upper_content_tokens=NUM_UPPER_CONTENT_TOKENS,
+    num_upper_output_tokens=NUM_UPPER_OUTPUT_TOKENS,
+    num_gpu_layers=NUM_GPU_LAYERS,
+    num_keep_rounds=NUM_CONVERSATION_KEEP_ROUNDS,
     verbose=VERBOSE,
 )
 
 
 def addLogToBuffer():
-    global buffer, logList, totalLogCount, bufferLogCount
+    global buffer, log_list, total_log_count, buffer_log_count
 
-    if totalLogCount < MAX_LOG_NUM:
-        buffer.append(logList[totalLogCount])
-        print("[Log Info]: ", logList[totalLogCount])
-        bufferLogCount += 1
-        totalLogCount += 1
+    if total_log_count < NUM_MAX_LOGS:
+        buffer.append(log_list[total_log_count])
+        print("[Log Info]: ", log_list[total_log_count])
+        buffer_log_count += 1
+        total_log_count += 1
     else:
         print("No more logs to add.")
 
 
 def threadChatToLLM():
-    global buffer, bufferLogCount, lastCheckTime, currentTime
+    global buffer, buffer_log_count, last_check_time, current_time
 
     while True:
-        currentTime = time.time()
+        current_time = time.time()
 
-        if bufferLogCount >= BUFFER_SIZE or (
-            currentTime - lastCheckTime >= 10 and bufferLogCount > 0
+        if buffer_log_count >= NUM_BUFFER_SIZE or (
+            current_time - last_check_time >= 10 and buffer_log_count > 0
         ):
             print("Start chatting to LLM.")
             log = "\n".join([f"{log}" for log in list(buffer)])
@@ -75,8 +75,8 @@ def threadChatToLLM():
             with open("output.txt", "a") as f:
                 f.write(output + "\n")
 
-            bufferLogCount = 0
-            lastCheckTime = currentTime
+            buffer_log_count = 0
+            last_check_time = current_time
 
 
 def onceChatToLLM():

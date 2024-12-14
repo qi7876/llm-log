@@ -5,46 +5,48 @@ from collections import deque
 class LogLLM:
     def __init__(
         self,
-        modelPath,
-        maxContentWindowSize,
+        model_path,
+        num_max_content_tokens,
         template,
-        upperContentWindowSize,
-        upperOutputTokenNum,
-        gpuLayerNum=0,
-        roundKeepNum=20,
+        num_upper_content_tokens,
+        num_upper_output_tokens,
+        num_gpu_layers=0,
+        num_keep_rounds=20,
         verbose=False,
     ) -> None:
         self.llm = Llama(
-            model_path=modelPath,
-            n_ctx=maxContentWindowSize,
-            n_gpu_layers=gpuLayerNum,
+            model_path=model_path,
+            n_ctx=num_max_content_tokens,
+            n_gpu_layers=num_gpu_layers,
             verbose=verbose,
         )
 
         self.verbose = verbose
         # Use prompt to limit the content return by LLM.
         self.template = template
-        self.upperContentWindowSize = upperContentWindowSize
-        self.fixedTokenNum = upperOutputTokenNum + self.getTokenNum(self.template)
-        self.maxContentWindowSize = maxContentWindowSize
+        self.num_upper_content_tokens = num_upper_content_tokens
+        self.num_fixed_tokens = num_upper_output_tokens + self.getTokenNum(
+            self.template
+        )
+        self.num_max_content_tokens = num_max_content_tokens
         # Record the history of conversation.
-        self.roundKeepNum = roundKeepNum
-        self.conversationHistory = deque(maxlen=roundKeepNum * 2)
-        self.historyTokenNumCount = 0
+        self.num_keep_rounds = num_keep_rounds
+        self.conversation_history = deque(maxlen=num_keep_rounds * 2)
+        self.history_tokens_count = 0
 
     def chat(self, message) -> str:
-        userMessage = "User: "
+        user_message = "User: "
         for _, value in message.items():
-            userMessage += value
-        userMessageTokenNum = self.getTokenNum(userMessage)
+            user_message += value
+        num_user_message_token = self.getTokenNum(user_message)
 
         # Check if the total token number exceeds the limit.
         while (
-            self.fixedTokenNum + userMessageTokenNum + self.historyTokenNumCount
-            > self.upperContentWindowSize
+            self.num_fixed_tokens + num_user_message_token + self.history_tokens_count
+            > self.num_upper_content_tokens
         ):
             # Clean the history if the total token number exceeds the limit.
-            if not self.conversationHistory:
+            if not self.conversation_history:
                 break
             self.deletHistory()
 
@@ -66,11 +68,11 @@ class LogLLM:
             print("=========================================================\n")
 
         # Add new conversation to the history.
-        assistantResponse = "Assistant: " + response
-        responseTokenNum = self.getTokenNum(assistantResponse)
-        self.conversationHistory.append(userMessage)
-        self.conversationHistory.append(assistantResponse)
-        self.historyTokenNumCount += userMessageTokenNum + responseTokenNum + 2
+        assistant_response = "Assistant: " + response
+        num_response_tokens = self.getTokenNum(assistant_response)
+        self.conversation_history.append(user_message)
+        self.conversation_history.append(assistant_response)
+        self.history_tokens_count += num_user_message_token + num_response_tokens + 2
 
         return response
 
@@ -82,19 +84,19 @@ class LogLLM:
             input = input.replace("{" + key + "}", value)
 
         # Add history to input.
-        if self.roundKeepNum != 0:
+        if self.num_keep_rounds != 0:
             history = ""
-            for msg in self.conversationHistory:
+            for msg in self.conversation_history:
                 history += msg + "\n"
             input = input.replace("{history}", history)
 
         return input
 
     def deletHistory(self) -> None:
-        if self.conversationHistory:
-            oldestMessage = self.conversationHistory.popleft()
-            self.historyTokenNumCount -= self.getTokenNum(oldestMessage) + 1
+        if self.conversation_history:
+            oldest_message = self.conversation_history.popleft()
+            self.history_tokens_count -= self.getTokenNum(oldest_message) + 1
 
     def getTokenNum(self, message) -> int:
-        tokenNum = len(self.llm.tokenize(message.encode("utf-8")))
-        return tokenNum
+        num_tokens = len(self.llm.tokenize(message.encode("utf-8")))
+        return num_tokens

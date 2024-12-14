@@ -1,8 +1,8 @@
-def calculateAccuracyAndRecall(groundTruthFile, predictionFile):
+def calculateAccuracyAndRecall(ground_truth_file, prediction_file):
     try:
-        with open(groundTruthFile, "r") as fGt, open(predictionFile, "r") as fPred:
-            gtLines = fGt.readlines()
-            predLines = fPred.readlines()
+        with open(ground_truth_file, "r") as f_gt, open(prediction_file, "r") as f_pred:
+            gt_lines = f_gt.readlines()
+            pred_lines = f_pred.readlines()
 
             # if len(gtLines) != len(predLines):
             #     print(
@@ -10,48 +10,48 @@ def calculateAccuracyAndRecall(groundTruthFile, predictionFile):
             #     )
             #     return None
 
-            truePositives = 0
-            trueNegatives = 0
-            falsePositives = 0
-            falseNegatives = 0
+            true_positives = 0
+            true_negatives = 0
+            false_positives = 0
+            false_negatives = 0
 
             # for i in range(len(gtLines)):
             for i in range(602):
-                gtLabel = gtLines[i].strip()
-                predLabel = predLines[i].strip()
+                gt_label = gt_lines[i].strip()
+                pred_label = pred_lines[i].strip()
 
                 # Ground Truth: Normal (-)
-                if gtLabel.startswith("- "):
-                    if "-" in predLabel:
-                        trueNegatives += 1
-                    elif "+" in predLabel:
-                        falsePositives += 1
+                if gt_label.startswith("- "):
+                    if "-" in pred_label:
+                        true_negatives += 1
+                    elif "+" in pred_label:
+                        false_positives += 1
                     else:
                         print(
-                            f"Error: Invalid prediction label at line {i+1}: {predLabel}"
+                            f"Error: Invalid prediction label at line {i+1}: {pred_label}"
                         )
                         return None
 
                 # Ground Truth: Abnormal (no prefix)
                 else:
-                    if "+" in predLabel:
-                        truePositives += 1
-                    elif "-" in predLabel:
-                        falseNegatives += 1
+                    if "+" in pred_label:
+                        true_positives += 1
+                    elif "-" in pred_label:
+                        false_negatives += 1
                     else:
                         print(
-                            f"Error: Invalid prediction label at line {i+1}: {predLabel}"
+                            f"Error: Invalid prediction label at line {i+1}: {pred_label}"
                         )
                         return None
 
             accuracy = (
-                (truePositives + trueNegatives) / len(gtLines)
-                if len(gtLines) > 0
+                (true_positives + true_negatives) / len(gt_lines)
+                if len(gt_lines) > 0
                 else 0
             )
             recall = (
-                truePositives / (truePositives + falseNegatives)
-                if (truePositives + falseNegatives) > 0
+                true_positives / (true_positives + false_negatives)
+                if (true_positives + false_negatives) > 0
                 else 0
             )
 
@@ -65,10 +65,10 @@ def calculateAccuracyAndRecall(groundTruthFile, predictionFile):
         return None
 
 
-groundTruthPath = "../dataset/BGL_2k.log"
-predictionPath = "../test/output.txt"
+ground_truth_path = "../dataset/BGL_2k.log"
+prediction_path = "../test/output.txt"
 
-results = calculateAccuracyAndRecall(groundTruthPath, predictionPath)
+results = calculateAccuracyAndRecall(ground_truth_path, prediction_path)
 
 if results:
     print(f"Accuracy: {results['accuracy']:.4f}")
