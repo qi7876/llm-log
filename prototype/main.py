@@ -56,6 +56,7 @@ def addLogToBuffer():
         total_log_count += 1
     else:
         print("No more logs to add.")
+        exit()
 
 
 def threadChatToLLM():
@@ -88,7 +89,7 @@ def onceChatToLLM():
     output = logLLM.chat(input)
 
     with open("output.txt", "a") as f:
-        f.write(output + "\n")
+        f.write(str(total_log_count) + output + "\n")
 
 
 # llmThread = threading.Thread(target=threadChatToLLM, daemon=True)

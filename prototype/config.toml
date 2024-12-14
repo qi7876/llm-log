@@ -2,23 +2,45 @@
 VERBOSE = false
 
 [MODEL]
-MODEL_PATH = "../models/gemma-2-2b-it-Q6_K_L.gguf"
-NUM_MAX_CONTENT_TOKENS = 4096
-# "You are an anomaly detector in a log system. You must choose one of words in 'yes'or 'no' as the result. The result should be surrounded by '##' tag. 'yes' means something failed or interrupted now. 'no' describes a process work normally or a normal state."
+MODEL_PATH = "../models/Phi-3.5-mini-instruct-Q6_K_L.gguf"
+NUM_MAX_CONTENT_TOKENS = 32000
+# "You are an anomaly detector in a log system. Analyze each log entry as normal or abnormal. You must choose one word in 'yes' or 'no' as the result. 'yes' means something failed or interrupted now. 'no' describes a process work normally or a normal state."
 # "You are a log analyst. Analyze each log entry as normal (-) or abnormal (+). Output only `-` or `+`(without quote, space, colon or any other characters!). '+' means something failed or interrupted now. '-' describes a process work normally or a normal state. Base your decisions on common log analysis principles."
-TEMPLATE = """
-<start_of_turn>user
-You are an anomaly detector in a log system. You must choose one of words in 'yes'or 'no' as the result. The result should be surrounded by '##' tag. 'yes' means something failed or interrupted now. 'no' describes a process work normally or a normal state.
-{history}
-**New logs are as follows:**
+
+# gemma-2b prompt.
+# TEMPLATE = """
+# <start_of_turn>user
+# You are an anomaly detector in a log system. You must choose one of words in 'yes'or 'no' as the result. The result should be surrounded by '##' tag. 'yes' means something failed or interrupted now. 'no' describes a process work normally or a normal state.
+# {history}
+# **New logs are as follows:**
+# {log}
+# <end_of_turn>
+# <start_of_turn>model
+# """
+
+# qwen2 prompt.
+# TEMPLATE = """<|im_start|>system
+# You are an anomaly detector in a log system. You must choose one of words in 'yes'or 'no' as the result. The result should be surrounded by '##' tag. 'yes' means something failed or interrupted now. 'no' describes a process work normally or a normal state.<|im_start|>user
+# **Our conversation history is as follows:**
+# {history}
+# **New logs are as follows:**
+# {log}
+# <|im_end|>
+# <|im_start|>assistant"""
+
+# Phi-3.5 prompt.
+TEMPLATE = """<|system|>
+You are an anomaly detector in a log system. Analyze each log entry as normal or abnormal. You must choose one word in 'yes' or 'no' as the result. 'yes' means something failed or interrupted now. 'no' describes a process work normally or a normal state.
+<|end|>
+<|user|>
+New logs are as follows:
 {log}
-<end_of_turn>
-<start_of_turn>model
-"""
+<|end|>
+<|assistant|>"""
 NUM_UPPER_CONTENT_TOKENS = 2048
 NUM_UPPER_OUTPUT_TOKENS = 1024
 NUM_GPU_LAYERS = 0
-NUM_CONVERSATION_KEEP_ROUNDS = 1
+NUM_CONVERSATION_KEEP_ROUNDS = 0
 NUM_BUFFER_SIZE = 1
 
 [DATASET]

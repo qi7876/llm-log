@@ -4,27 +4,27 @@ def calculateAccuracyAndRecall(ground_truth_file, prediction_file):
             gt_lines = f_gt.readlines()
             pred_lines = f_pred.readlines()
 
-            # if len(gtLines) != len(predLines):
-            #     print(
-            #         "Error: Number of lines in ground truth and prediction files do not match."
-            #     )
-            #     return None
+            if len(gt_lines) != len(pred_lines):
+                print(
+                    "Error: Number of lines in ground truth and prediction files do not match."
+                )
+                return None
 
             true_positives = 0
             true_negatives = 0
             false_positives = 0
             false_negatives = 0
 
-            # for i in range(len(gtLines)):
-            for i in range(602):
+            for i in range(len(gt_lines)):
+                # for i in range(1931):
                 gt_label = gt_lines[i].strip()
                 pred_label = pred_lines[i].strip()
 
                 # Ground Truth: Normal (-)
                 if gt_label.startswith("- "):
-                    if "-" in pred_label:
+                    if "no" in pred_label:
                         true_negatives += 1
-                    elif "+" in pred_label:
+                    elif "yes" in pred_label:
                         false_positives += 1
                     else:
                         print(
@@ -34,9 +34,9 @@ def calculateAccuracyAndRecall(ground_truth_file, prediction_file):
 
                 # Ground Truth: Abnormal (no prefix)
                 else:
-                    if "+" in pred_label:
+                    if "yes" in pred_label:
                         true_positives += 1
-                    elif "-" in pred_label:
+                    elif "no" in pred_label:
                         false_negatives += 1
                     else:
                         print(
@@ -65,8 +65,8 @@ def calculateAccuracyAndRecall(ground_truth_file, prediction_file):
         return None
 
 
-ground_truth_path = "../dataset/BGL_2k.log"
-prediction_path = "../test/output.txt"
+ground_truth_path = "../dataset/BGL/BGL_2k.log"
+prediction_path = "output.txt"
 
 results = calculateAccuracyAndRecall(ground_truth_path, prediction_path)
 
