@@ -32,6 +32,7 @@ buffer_log_count = 0
 last_check_time = time.time()
 current_time = time.time()
 
+
 log_list = loadDataset(DATASET_PATH, NUM_MAX_LOGS)
 
 logLLM = LogLLM(
@@ -46,14 +47,21 @@ logLLM = LogLLM(
 )
 
 
-def addLogToBuffer():
+def addLogToBuffer(log_number):
     global buffer, log_list, total_log_count, buffer_log_count
 
-    if total_log_count < NUM_MAX_LOGS:
-        buffer.append(log_list[total_log_count])
-        print("[Log Info]: ", log_list[total_log_count])
-        buffer_log_count += 1
-        total_log_count += 1
+    if total_log_count < NUM_MAX_LOGS and total_log_count + log_number <= NUM_MAX_LOGS:
+        for _ in range(log_number):
+            buffer.append(log_list[total_log_count])
+            print("[Log Info]: ", log_list[total_log_count])
+            buffer_log_count += 1
+            total_log_count += 1
+    elif total_log_count < NUM_MAX_LOGS and total_log_count + log_number > NUM_MAX_LOGS:
+        for _ in range(total_log_count + log_number - NUM_MAX_LOGS):
+            buffer.append(log_list[total_log_count])
+            print("[Log Info]: ", log_list[total_log_count])
+            buffer_log_count += 1
+            total_log_count += 1
     else:
         print("No more logs to add.")
         exit()
@@ -85,7 +93,9 @@ def onceChatToLLM():
 
     print("Start chatting to LLM.")
     log = "\n".join([f"{log}" for log in list(buffer)])
+
     input = {"log": log}
+    logLLM.template = TEMPLATE
     output = logLLM.chat(input)
 
     with open("output.txt", "a") as f:
@@ -96,10 +106,9 @@ def onceChatToLLM():
 # llmThread.start()
 # print("LLM thread started.")
 
-
 try:
     while True:
-        addLogToBuffer()
+        addLogToBuffer(NUM_BUFFER_SIZE)
         onceChatToLLM()
 except KeyboardInterrupt:
     print("STOP")

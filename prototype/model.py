@@ -11,7 +11,7 @@ class LogLLM:
         num_upper_content_tokens,
         num_upper_output_tokens,
         num_gpu_layers=0,
-        num_keep_rounds=20,
+        num_keep_rounds=0,
         verbose=False,
     ) -> None:
         self.llm = Llama(
