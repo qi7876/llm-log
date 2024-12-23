@@ -56,15 +56,17 @@ def addLogToBuffer(log_number):
             print("[Log Info]: ", log_list[total_log_count])
             buffer_log_count += 1
             total_log_count += 1
+            return True
     elif total_log_count < NUM_MAX_LOGS and total_log_count + log_number > NUM_MAX_LOGS:
         for _ in range(total_log_count + log_number - NUM_MAX_LOGS):
             buffer.append(log_list[total_log_count])
             print("[Log Info]: ", log_list[total_log_count])
             buffer_log_count += 1
             total_log_count += 1
+            return True
     else:
         print("No more logs to add.")
-        exit()
+        return False
 
 
 def threadChatToLLM():
@@ -88,27 +90,13 @@ def threadChatToLLM():
             last_check_time = current_time
 
 
-def onceChatToLLM():
-    global buffer
-
-    print("Start chatting to LLM.")
-    log = "\n".join([f"{log}" for log in list(buffer)])
-
-    input = {"log": log}
-    logLLM.template = TEMPLATE
-    output = logLLM.chat(input)
-
-    with open("output.txt", "a") as f:
-        f.write(str(total_log_count) + output + "\n")
-
-
-# llmThread = threading.Thread(target=threadChatToLLM, daemon=True)
-# llmThread.start()
-# print("LLM thread started.")
+llmThread = threading.Thread(target=threadChatToLLM, daemon=True)
+llmThread.start()
+print("LLM thread started.")
 
 try:
-    while True:
-        addLogToBuffer(NUM_BUFFER_SIZE)
-        onceChatToLLM()
+    ret = True
+    while ret:
+        ret = addLogToBuffer(1)
 except KeyboardInterrupt:
     print("STOP")
