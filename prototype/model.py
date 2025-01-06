@@ -38,17 +38,9 @@ class LogLLM:
         user_message = "User: "
         for _, value in message.items():
             user_message += value
-        num_user_message_token = self.getTokenNum(user_message)
 
-        # Check if the total token number exceeds the limit.
-        while (
-            self.num_fixed_tokens + num_user_message_token + self.history_tokens_count
-            > self.num_upper_content_tokens
-        ):
-            # Clean the history if the total token number exceeds the limit.
-            if not self.conversation_history:
-                break
-            self.deletHistory()
+        num_user_message_token = self.getTokenNum(user_message)
+        self.deletHistory(num_user_message_token)
 
         input = self.buildPrompt(message)
 
@@ -92,10 +84,18 @@ class LogLLM:
 
         return input
 
-    def deletHistory(self) -> None:
-        if self.conversation_history:
-            oldest_message = self.conversation_history.popleft()
-            self.history_tokens_count -= self.getTokenNum(oldest_message) + 1
+    def deletHistory(self, num_user_message_token) -> None:
+        # Check if the total token number exceeds the limit.
+        while (
+            self.num_fixed_tokens + num_user_message_token + self.history_tokens_count
+            > self.num_upper_content_tokens
+        ):
+            # Clean the history if the total token number exceeds the limit.
+            if not self.conversation_history:
+                break
+            else:
+                oldest_message = self.conversation_history.popleft()
+                self.history_tokens_count -= self.getTokenNum(oldest_message) + 1
 
     def getTokenNum(self, message) -> int:
         num_tokens = len(self.llm.tokenize(message.encode("utf-8")))
