@@ -1,3 +1,10 @@
+"""evaluate.py
+
+This module is used to evaluate the accuracy and recall of the LogLLM.
+@date: 2024-12-14
+@author: qi7876
+"""
+
 def calculateAccuracyAndRecall(ground_truth_file, prediction_file):
     try:
         with open(ground_truth_file, "r") as f_gt, open(prediction_file, "r") as f_pred:
