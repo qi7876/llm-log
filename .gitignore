@@ -1,10 +1,13 @@
 dataset
 loghub
-*.pt
 *.csv
+*.pt
 *.log
 *.model
 *.vocab
 *.code-workspace
 __pycache__
+*.vec
+*.bin
+
 
