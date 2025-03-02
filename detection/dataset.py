@@ -1,3 +1,9 @@
+"""dataset.py
+
+This module is used to load the log dataset.
+@author: qi7876
+"""
+
 def loadDataset(dataset_path, num_max_logs) -> list[str]:
     log_list = []
     log_count = 0

@@ -1,7 +1,6 @@
 """evaluate.py
 
 This module is used to evaluate the accuracy and recall of the LogLLM.
-@date: 2024-12-14
 @author: qi7876
 """
 

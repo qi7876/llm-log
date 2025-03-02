@@ -2,6 +2,8 @@
 models
 dataset
 output.txt
+hf_cache
+responses/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
