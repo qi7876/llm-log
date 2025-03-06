@@ -22,7 +22,6 @@ def calculateAccuracyAndRecall(ground_truth_file, prediction_file):
             false_negatives = 0
 
             for i in range(len(gt_lines)):
-                # for i in range(1931):
                 gt_label = gt_lines[i].strip()
                 pred_label = pred_lines[i].strip()
 

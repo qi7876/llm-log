@@ -16,7 +16,7 @@ log_list = loadDataset("../dataset/BGL/BGL_2k.log", 2000)
 timer = 1
 
 for i in log_list:
-    response = r1.api_request("New logs are as follows:\n" + i)
+    response = r1.api_request(i)
     message = response.choices[0].message
 
     simple_message_dict = {"content": message.content, "reasoning_content": message.reasoning_content}
@@ -26,6 +26,6 @@ for i in log_list:
         json.dump(parsed_json, file, indent=4)
 
     with open("./output.txt", 'a') as file:
-        file.write(message.content + "\n")
+        file.write(timer + message.content + "\n")
     
     timer += 1
