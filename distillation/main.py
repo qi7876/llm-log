@@ -13,7 +13,7 @@ from detection.dataset import loadDataset
 import json
 
 log_list = loadDataset("../dataset/BGL/BGL_2k.log", 2000)
-timer = 1
+counter = 1
 
 for i in log_list:
     response = r1.api_request(i)
@@ -22,10 +22,10 @@ for i in log_list:
     simple_message_dict = {"content": message.content, "reasoning_content": message.reasoning_content}
     parsed_json = json.dumps(simple_message_dict)
 
-    with open(f"./responses/{timer}.json", 'w') as file:
+    with open(f"./responses/{counter}.json", 'w') as file:
         json.dump(parsed_json, file, indent=4)
 
     with open("./output.txt", 'a') as file:
-        file.write(str(timer) + message.content + "\n")
+        file.write(str(counter) + message.content + "\n")
     
-    timer += 1
+    counter += 1
