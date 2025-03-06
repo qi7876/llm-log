@@ -26,6 +26,6 @@ for i in log_list:
         json.dump(parsed_json, file, indent=4)
 
     with open("./output.txt", 'a') as file:
-        file.write(timer + message.content + "\n")
+        file.write(str(timer) + message.content + "\n")
     
     timer += 1
