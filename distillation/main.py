@@ -13,6 +13,7 @@ from detection.dataset import loadDataset
 import json
 
 log_list = loadDataset("../dataset/BGL/BGL_2k.log", 2000)
+
 counter = 1
 
 for i in log_list:

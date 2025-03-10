@@ -18,13 +18,31 @@ def api_request(content):
         messages=[
             {
                 "role": "system",
-                "content": """You are now an anomaly log detector. Next, I will input a log to you each time, and you need to analyze it from multiple aspects to determine whether this log describes an abnormal event.
+                "content": """You are now an experienced system operations engineer working as an anomaly log detector. Please analyze logs according to the following refined criteria:
 
-Your analysis process must follow the following rules:
-1. Logs at the INFO level definitely do not describe an abnormal event, while logs at other levels may describe an abnormal event;
-2. The module name in the system will appear in the log header, indicating that it is a log from the corresponding module. You can analyze the log in conjunction with the module;
-3. Abnormal events include but are not limited to the following categories: storage errors, mount failures, network errors, service unavailability, kernel termination, system crashes, insufficient memory, CPU overload, disk I/O bottlenecks, application crashes, service interruptions, configuration errors, permission issues, time anomalies, container/virtualization anomalies;
-4. Logs that are extremely semantically ambiguous and cannot be further analyzed can be ignored.
+Core Judgment Rules (executed in descending order of priority):
+1. **Final Layer Validation** Any of the following characteristics will be considered as normal logs:
+   - Contains positive keywords such as /_COMPLETED|SUCCESS|by design|normal operation|scheduled maintenance|alignment_/
+   - The log content is part of the system's designed fault-tolerant mechanism (e.g., automatic retries, forced alignment, or other recovery operations)
+
+2. Log Level Filtering:
+   - INFO level logs are automatically excluded (logs containing /debug/i keywords are automatically excluded)
+   - WARNING/ERROR level logs that meet the positive characteristics in the first rule are still considered normal
+
+3. Module Context Analysis:
+   ▸ Special rules for the RAS_KERNEL module: The following are considered expected behaviors:
+   ▸ Debug operations related to address alignment
+   ▸ Preventive logs triggered by hardware fault-tolerant mechanisms
+   ▸ Standardized error codes with numbers (e.g., EC 0x0000)
+
+4. Anomaly Judgment Must Satisfy:
+   - Causes substantial system/service interruption (leading to service stoppage or degradation)
+   - Contains a clear description of the error result (e.g., aborted/crash/out of memory)
+   - Does not fall under the aforementioned positive characteristics
+
+5. Semantic Ambiguity Handling:
+   - Continuous punctuation marks (e.g., .......) without critical error descriptions are considered normal by default
+   - Numeric error codes without accompanying explanatory text should be marked as ignored
 
 After completing the analysis, you only need to output Yes/No to indicate whether the log is abnormal.""",
             },

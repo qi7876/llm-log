@@ -44,7 +44,7 @@ def validateFiles(ground_truth_file, prediction_file):
         
     return True
 
-def calculateAccuracyAndRecall(ground_truth_file, prediction_file):
+def calculateAccuracyAndRecall(ground_truth_file, prediction_file, verbose=False):
     if not validateFiles(ground_truth_file, prediction_file):
         return None
         
@@ -77,6 +77,7 @@ def calculateAccuracyAndRecall(ground_truth_file, prediction_file):
             false_positives = 0
             false_negatives = 0
             invalid_lines = []
+            error_details = []
 
             for i in range(len(pred_lines)):
                 gt_label = gt_lines[i].strip()
@@ -91,6 +92,8 @@ def calculateAccuracyAndRecall(ground_truth_file, prediction_file):
                 # Enhanced validation for prediction format
                 if not ("yes" in pred_label.lower() or "no" in pred_label.lower()):
                     invalid_lines.append((i + 1, pred_label))
+                    if verbose:
+                        error_details.append((i + 1, gt_label, pred_label, "Invalid format"))
                     continue
 
                 # Ground Truth: Normal (-)
@@ -99,8 +102,12 @@ def calculateAccuracyAndRecall(ground_truth_file, prediction_file):
                         true_negatives += 1
                     elif "yes" in pred_label.lower():
                         false_positives += 1
+                        if verbose:
+                            error_details.append((i + 1, gt_label, pred_label, "False Positive"))
                     else:
                         invalid_lines.append((i + 1, pred_label))
+                        if verbose:
+                            error_details.append((i + 1, gt_label, pred_label, "Invalid format"))
 
                 # Ground Truth: Abnormal (no prefix)
                 else:
@@ -108,8 +115,12 @@ def calculateAccuracyAndRecall(ground_truth_file, prediction_file):
                         true_positives += 1
                     elif "no" in pred_label.lower():
                         false_negatives += 1
+                        if verbose:
+                            error_details.append((i + 1, gt_label, pred_label, "False Negative"))
                     else:
                         invalid_lines.append((i + 1, pred_label))
+                        if verbose:
+                            error_details.append((i + 1, gt_label, pred_label, "Invalid format"))
 
             if invalid_lines:
                 print(f"Found {len(invalid_lines)} invalid lines in prediction file:")
@@ -120,11 +131,22 @@ def calculateAccuracyAndRecall(ground_truth_file, prediction_file):
                 if len(invalid_lines) == len(pred_lines):
                     print("Error: All prediction lines are invalid.")
                     return None
-
+            
+            if verbose and error_details:
+                print("\nDetailed Error Analysis:")
+                print("Line\tGround Truth\t\tPrediction\tError Type")
+                print("-" * 65)
+                for line_num, gt, pred, error_type in error_details:
+                    # Truncate long log lines for better display
+                    gt_display = (gt[:15] + '...') if len(gt) > 15 else gt
+                    pred_display = (pred[:15] + '...') if len(pred) > 15 else pred
+                    print(f"{line_num}\t{gt_display}\t{pred_display}\t\t{error_type}")
+                    with open("line_num.txt", 'a') as file:
+                        file.write(str(line_num) + "\n")
             # Avoid division by zero errors
             try:
                 precision = (
-                    (true_positives + true_negatives) / (len(gt_lines) - len(invalid_lines))
+                    true_positives / (true_positives + false_positives)
                     if (len(gt_lines) - len(invalid_lines)) > 0
                     else 0
                 )
@@ -151,6 +173,7 @@ def calculateAccuracyAndRecall(ground_truth_file, prediction_file):
                 "false_positives": false_positives,
                 "false_negatives": false_negatives,
                 "invalid_lines": len(invalid_lines),
+                "error_details": error_details if verbose else []
             })
 
             return results
@@ -170,34 +193,38 @@ def calculateAccuracyAndRecall(ground_truth_file, prediction_file):
 
 if __name__ == "__main__":
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "g:p:h", ["ground_truth=", "prediction=", "help"])
+        opts, args = getopt.getopt(sys.argv[1:], "g:p:hv", ["ground_truth=", "prediction=", "help", "verbose"])
     except getopt.GetoptError as err:
         print(f"Error: {err}")
-        print("Usage: python evaluate.py -g <ground_truth_file> -p <prediction_file>")
+        print("Usage: python evaluate.py -g <ground_truth_file> -p <prediction_file> [-v]")
         sys.exit(1)
 
     ground_truth_path = None
     prediction_path = None
+    verbose = False
 
     for opt, arg in opts:
         if opt in ("-h", "--help"):
-            print("Usage: python evaluate.py -g <ground_truth_file> -p <prediction_file>")
+            print("Usage: python evaluate.py -g <ground_truth_file> -p <prediction_file> [-v]")
             print("Options:")
             print("  -g, --ground_truth  Path to the ground truth file")
             print("  -p, --prediction    Path to the prediction file")
+            print("  -v, --verbose       Enable verbose output showing misclassified entries")
             print("  -h, --help          Show this help message and exit")
             sys.exit(0)
         elif opt in ("-g", "--ground_truth"):
             ground_truth_path = arg
         elif opt in ("-p", "--prediction"):
             prediction_path = arg
+        elif opt in ("-v", "--verbose"):
+            verbose = True
 
     if not ground_truth_path or not prediction_path:
         print("Error: Both ground truth and prediction files must be specified.")
-        print("Usage: python evaluate.py -g <ground_truth_file> -p <prediction_file>")
+        print("Usage: python evaluate.py -g <ground_truth_file> -p <prediction_file> [-v]")
         sys.exit(1)
 
-    results = calculateAccuracyAndRecall(ground_truth_path, prediction_path)
+    results = calculateAccuracyAndRecall(ground_truth_path, prediction_path, verbose)
 
     if results:
         print("\nResults:")
