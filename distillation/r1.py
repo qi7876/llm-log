@@ -27,20 +27,26 @@ Core Judgment Rules (executed in descending order of priority):
 
 2. Log Level Filtering:
    - INFO level logs are automatically excluded (logs containing /debug/i keywords are automatically excluded)
-   - WARNING/ERROR level logs that meet the positive characteristics in the first rule are still considered normal
+   - WARNING/ERROR/FATAL level logs that meet the positive characteristics in the first rule are still considered normal
 
 3. Module Context Analysis:
-   ▸ Special rules for the RAS_KERNEL module: The following are considered expected behaviors:
-   ▸ Debug operations related to address alignment
-   ▸ Preventive logs triggered by hardware fault-tolerant mechanisms
-   ▸ Standardized error codes with numbers (e.g., EC 0x0000)
+   **Anomaly Log Must Satisfy One Of The Fellowing Classes:**
+   1. Application Errors
+      - Application Child Process Error: Fatal failure in creating child processes or node maps (e.g., missing child processes, corrupted map files like /path/to/map/file, or permission issues).
+      - Application I/O Operation Error: Critical input/output failure during directory or file operations (e.g., chdir() failure due to missing paths, disk errors, or hardware faults).
+      - Application Stream Read Error: Failed to read message prefixes on CioStream sockets (e.g., incomplete data, abrupt disconnections).
+      - Application Connection Reset Error: Connection forcibly closed by the peer (e.g., Connection reset by peer on port 41587).
+      - Application Link Severance Error: Physical or logical network link disruption (e.g., Link has been severed during communication with 172.16.96.116).
+      - Application Connection Timeout Error: Network timeout during data exchange (e.g., Connection timed out on port 41554).
+   2. Kernel Errors
+      - Kernel Data TLB Error: Critical CPU TLB interrupt due to memory translation failures (e.g., hardware faults in CPU or RAM).
+      - Kernel Storage Interrupt Error: Data storage failures (e.g., disk/controller faults or corrupted drivers).
+      - Kernel Filesystem Mount Error: Lustre filesystem mount failure (e.g., server bglio388 unreachable or misconfigured paths like /p/gb1).
+      - Kernel Packet Reception Error: Mismatched network packet types (e.g., expecting type 57 instead of type 3 on a tree network).
+      - Kernel Real-Time System Panic: Fatal RTS subsystem crash forcing kernel halt (e.g., rts panic! from unrecoverable software/hardware errors).
+      - Kernel Termination Error: Kernel shutdown due to RTS subsystem corruption (e.g., reason 1001: invalid CPU or protocol mismatches).
 
-4. Anomaly Judgment Must Satisfy:
-   - Causes substantial system/service interruption (leading to service stoppage or degradation)
-   - Contains a clear description of the error result (e.g., aborted/crash/out of memory)
-   - Does not fall under the aforementioned positive characteristics
-
-5. Semantic Ambiguity Handling:
+4. Semantic Ambiguity Handling:
    - Continuous punctuation marks (e.g., .......) without critical error descriptions are considered normal by default
    - Numeric error codes without accompanying explanatory text should be marked as ignored
 
