@@ -4,9 +4,9 @@ import json
 
 sys.path.append("../")
 
-from detection import dataset
+from detection import dataset_utils
 
-log_list = dataset.loadDataset("../dataset/BGL/BGL_2k.log", 2000)
+log_list = dataset.load_dataset("../dataset/BGL/BGL_2k.new_log", 2000)
 
 response = r1.api_request("New logs are as follows:\n" + log_list[0])
 

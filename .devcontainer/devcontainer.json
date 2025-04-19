@@ -21,7 +21,7 @@
     ],
     "mounts": [
       // UNCOMMENT AND TYPE YOUR ABSOLUTE PATH TO THE DATASETS FOLDER
-    //   "type=bind,source=/home/wangqi/projects/llm-log,target=/prj"
+    //   "type=bind,source=/home/wangqi/projects/llm-new_log,target=/prj"
     ],
     "shutdownAction": "none",
     "hostRequirements": {

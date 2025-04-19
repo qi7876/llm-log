@@ -4,6 +4,7 @@ dataset
 output.txt
 hf_cache
 responses/
+chroma_db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

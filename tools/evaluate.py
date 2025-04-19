@@ -137,7 +137,7 @@ def calculateAccuracyAndRecall(ground_truth_file, prediction_file, verbose=False
                 print("Line\tGround Truth\t\tPrediction\tError Type")
                 print("-" * 65)
                 for line_num, gt, pred, error_type in error_details:
-                    # Truncate long log lines for better display
+                    # Truncate long new_log lines for better display
                     gt_display = (gt[:15] + '...') if len(gt) > 15 else gt
                     pred_display = (pred[:15] + '...') if len(pred) > 15 else pred
                     print(f"{line_num}\t{gt_display}\t{pred_display}\t\t{error_type}")

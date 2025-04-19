@@ -11,10 +11,10 @@ import traceback
 
 sys.path.append("../")
 
-from detection.dataset import loadDataset
+from detection.dataset_utils import load_dataset
 import json
 
-log_list = loadDataset("../dataset/BGL/BGL_2k.log", 2000)
+log_list = load_dataset("../dataset/BGL/BGL_2k.log", 2000)
 
 counter = 1918
 
@@ -23,11 +23,11 @@ while counter <= 2000:
     max_retries = 10
     success = False
     status = "Success"
-    print(f"Processing log {counter}...")
+    print(f"Processing new_log {counter}...")
     
     while retry_count < max_retries and not success:
         try:
-            print(f"Processing log {counter}, attempt {retry_count + 1}/{max_retries}")
+            print(f"Processing new_log {counter}, attempt {retry_count + 1}/{max_retries}")
             response = r1.api_request(log_list[counter - 1])
             message = response.choices[0].message
             success = True
@@ -43,15 +43,15 @@ while counter <= 2000:
                 print(f"Retrying in 5 seconds...")
                 time.sleep(5)  # Wait before retrying
             else:
-                print(f"All {max_retries} attempts failed for log {counter}. Skipping to next log.")
+                print(f"All {max_retries} attempts failed for new_log {counter}. Skipping to next new_log.")
                 # Create empty content for failed request
                 simple_message_dict = {"content": "", "reasoning_content": ""}
                 parsed_json = json.dumps(simple_message_dict)
                 
-                # Record the failed log number to a separate file
+                # Record the failed new_log number to a separate file
                 with open("./failed_logs.txt", 'a') as failed_file:
                     failed_file.write(f"{counter}\n")
-                print(f"Recorded log number {counter} to failed_logs.txt")
+                print(f"Recorded new_log number {counter} to failed_logs.txt")
     
     with open(f"./responses/{counter}.json", 'w') as file:
         json.dump(parsed_json, file, indent=4)
@@ -59,6 +59,6 @@ while counter <= 2000:
     with open("./output.txt", 'a') as file:
         file.write(str(counter) + (message.content if success else "") + "\n")
     
-    print("Processed log number:", counter, "Status:", status)
+    print("Processed new_log number:", counter, "Status:", status)
     
     counter += 1

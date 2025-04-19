@@ -1,6 +1,5 @@
 # 🤖llm-log
 
-> [!IMPORTANT]
 > This project is still in development and is not yet ready for use.
 
 ## 📄Introduction

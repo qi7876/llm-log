@@ -1,10 +1,10 @@
-"""dataset.py
+"""dataset_utils.py
 
-This module is used to load the log dataset.
+This module is used to load the new_log dataset.
 @author: qi7876
 """
 
-def loadDataset(dataset_path, num_max_logs) -> list[str]:
+def load_dataset(dataset_path, num_max_logs) -> list[str]:
     log_list = []
     log_count = 0
     with open(dataset_path, "r") as file:

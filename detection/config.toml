@@ -1,20 +1,17 @@
-[DEBUG]
-VERBOSE = true
+[debug]
+verbose = true
 
-[MODEL]
-MODEL_PATH = "../models/Phi-3.5-mini-instruct-Q5_K_L.gguf"
-NUM_MAX_CONTENT_TOKENS = 8192
-TEMPLATE = """<|system|>
-You are an anomaly detector in a log system. Analyze each log entry as normal or abnormal. You must choose one word in 'yes' or 'no' as the result. 'yes' means something failed or interrupted now. 'no' describes a process work normally or a normal state.
-<|end|>
-<|user|>
-New logs are as follows:
-{log}
-<|end|>
-<|assistant|>"""
-NUM_GPU_LAYERS = 33
-NUM_BUFFER_SIZE = 1
+[model]
+model_path = "../models/Phi-3.5-mini-instruct-Q5_K_L.gguf"
+num_max_content_tokens = 8192
 
-[DATASET]
-DATASET_PATH = "../dataset/BGL/BGL_2k.log"
-NUM_MAX_LOGS = 2000
+num_gpu_layers = 33
+num_buffer_size = 1
+
+[rag]
+chroma_db_dir = "chroma_db"
+collection_name = "documents"
+
+[dataset]
+dataset_path = "../dataset/BGL/BGL_2k.log"
+num_max_logs = 2000

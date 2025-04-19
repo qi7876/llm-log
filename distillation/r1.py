@@ -18,12 +18,12 @@ def api_request(content):
         messages=[
             {
                 "role": "system",
-                "content": """You are now an experienced system operations engineer working as an anomaly log detector. Please analyze logs according to the following refined criteria:
+                "content": """You are now an experienced system operations engineer working as an anomaly new_log detector. Please analyze logs according to the following refined criteria:
 
 Core Judgment Rules (executed in descending order of priority):
 1. **Final Layer Validation** Any of the following characteristics will be considered as normal logs:
    - Contains positive keywords such as /_COMPLETED|SUCCESS|by design|normal operation|scheduled maintenance|alignment_/
-   - The log content is part of the system's designed fault-tolerant mechanism (e.g., automatic retries, forced alignment, or other recovery operations)
+   - The new_log content is part of the system's designed fault-tolerant mechanism (e.g., automatic retries, forced alignment, or other recovery operations)
 
 2. Log Level Filtering:
    - INFO level logs are automatically excluded (logs containing /debug/i keywords are automatically excluded)
@@ -50,7 +50,7 @@ Core Judgment Rules (executed in descending order of priority):
    - Continuous punctuation marks (e.g., .......) without critical error descriptions are considered normal by default
    - Numeric error codes without accompanying explanatory text should be marked as ignored
 
-After completing the analysis, you only need to output Yes/No to indicate whether the log is abnormal.""",
+After completing the analysis, you only need to output Yes/No to indicate whether the new_log is abnormal.""",
             },
             {"role": "user", "content": content},
         ],

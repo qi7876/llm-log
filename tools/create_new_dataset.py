@@ -1,6 +1,6 @@
 line_num_file = "./line_num.txt"
-original_dataset = "../dataset/BGL/BGL_2k.log"
-new_dataset = "../dataset/BGL/BGL_extracted.log"  # Path for the new dataset
+original_dataset = "../dataset/BGL/BGL_2k.new_log"
+new_dataset = "../dataset/BGL/BGL_extracted.new_log"  # Path for the new dataset
 
 with open(line_num_file, 'r') as line_num, open(original_dataset, 'r') as dataset:
     # Read all line numbers into a list and convert to integers
