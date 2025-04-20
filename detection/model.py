@@ -62,8 +62,6 @@ class LogLLM:
             print("\n=========================================================")
             print(f"[Input]: {complete_prompt}")
             print("\n=========================================================")
-            print(f"[Input Token Num]: {self.get_token_num(complete_prompt)}")
-            print("=========================================================\n")
 
         # Get the response from the LLM model.
         output = self.llm(complete_prompt)

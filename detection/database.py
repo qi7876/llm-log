@@ -45,11 +45,12 @@ class VectorDatabase:
         # Format results for LLM
         formatted_results = []
         for i, doc in enumerate(results['documents'][0]):
-            distance = results['distances'][0][i] if 'distances' in results else "N/A"
-            metadata = results['metadatas'][0][i] if 'metadatas' in results else {}
-            
-            source = metadata.get('source', 'Unknown')
-            formatted_doc = f"Document {i+1} (Distance: {distance}):\nSource: {source}\n{doc}\n"
-            formatted_results.append(formatted_doc)
+            # distance = results['distances'][0][i] if 'distances' in results else "N/A"
+            # metadata = results['metadatas'][0][i] if 'metadatas' in results else {}
+            #
+            # source = metadata.get('source', 'Unknown')
+            # formatted_doc = f"Document {i+1} (Distance: {distance}):\nSource: {source}\n{doc}\n"
+            # formatted_results.append(formatted_doc)
+            formatted_results.append(doc)
             
         return "\n".join(formatted_results)
