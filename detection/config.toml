@@ -2,10 +2,9 @@
 verbose = true
 
 [model]
-model_path = "../models/Phi-3.5-mini-instruct-Q5_K_L.gguf"
+model_path = "../models/phi-4-Q6_K.gguf"
 num_max_content_tokens = 8192
-
-num_gpu_layers = 33
+num_gpu_layers = 41
 num_buffer_size = 1
 
 [rag]

@@ -5,6 +5,9 @@ output.txt
 hf_cache
 responses/
 chroma_db
+line_num.txt
+rag_dataset.txt
+BGL_extracted.log
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

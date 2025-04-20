@@ -48,7 +48,7 @@ def create_database(
         content = file.read()
     
     # Split content into chunks (simple splitting by newlines for example)
-    chunks = content.split("\n\n")
+    chunks = content.split("\n")
     chunks = [chunk.strip() for chunk in chunks if chunk.strip()]
     
     # Generate IDs for documents
@@ -65,7 +65,7 @@ def create_database(
     return db_dir
 
 if __name__ == "__main__":
-    file_path = "../dataset/BGL/BGL_2k.log"
+    file_path = "all_rag_dataset.txt"
     chroma_db_dir = "../detection/chroma_db"
     collection_name = "documents"
     backup = False

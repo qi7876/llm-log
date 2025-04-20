@@ -30,24 +30,68 @@ COLLECTION_NAME = config["rag"].get("collection_name", "documents")
 DATASET_PATH = config["dataset"].get("dataset_path", "")
 NUM_MAX_LOGS = config["dataset"].get("num_max_logs", 1000)
 
-prompt_without_rag = """<|system|>
-You are an anomaly detector in a log system. Analyze each log entry as normal or abnormal. You must choose one word in 'yes' or 'no' as the result. 'yes' means something failed or interrupted now. 'no' describes a process work normally or a normal state.
-<|end|>
-<|user|>
-New logs are as follows:
+prompt_without_rag = """<|im_start|>system<|im_sep|>You are an anomaly log detector. Please analyze logs according to the following refined criteria:
+
+1. Log Level Filtering:
+  - INFO level logs or logs with "debug" marked are normal.
+  - WARNING/ERROR/FATAL level logs maybe abnormal. You should analyze the log according to the third part.
+   
+2. Special cases:
+  **The Cases Below should not be detected to anomaly log.**
+  - RAS APP FATAL ciod: Error loading PATH: invalid or missing program image, Permission denied.
+  - RAS APP FATAL ciod: Error loading PATH: invalid or missing program image, No such file or directory
+
+3. Module Context Analysis:
+  **Anomaly Log Must Satisfy One Of The Following Classes:**
+  1. Application Errors(RAS APP FATAL):
+    - Application Child Process Error: There is no child processes when creating node map.
+    - Application I/O Operation Error: Input/output error in chdir.
+    - Application Stream Read Error: Failed to read message prefix.
+    - Application Connection Reset Error: Connection reset by peer when reading message prefix.
+    - Application Link Severance Error: Link has been severed when reading message prefix.
+    - Application Connection Timeout Error: Connection timed out when reading message prefix.
+  2. Kernel Errors(RAS KERNEL FATAL):
+    - Kernel Data TLB Error: data TLB error interrupt.
+    - Kernel Storage Error: data storage interrupt.
+    - Kernel Filesystem Mount Error: Lustre mount FAILED.
+    - Kernel Packet Reception Error: Error receiving packet on tree network, type mismatch.
+    - Kernel Real-Time System Panic: rts panic.
+    - Kernel Termination Error: Kernel terminated for some reason.
+
+After completing the analysis, you only need to output Yes/No to indicate whether the log is abnormal. **DO NOT OUTPUT THE ANALYSIS.**<|im_end|><|im_start|>user<|im_sep|>New logs are as follows:
+{log}<|im_end|><|im_start|>assistant<|im_sep|>"""
+prompt_with_rag = """<|im_start|>system<|im_sep|>You are an anomaly log detector. Please analyze logs according to the following refined criteria:
+
+1. Log Level Filtering:
+  - INFO level logs or logs with "debug" marked are normal.
+  - WARNING/ERROR/FATAL level logs maybe abnormal. You should analyze the log according to the third part.
+   
+2. Special cases:
+  **The Cases Below should not be detected to anomaly log.**
+  - RAS APP FATAL ciod: Error loading PATH: invalid or missing program image, Permission denied.
+  - RAS APP FATAL ciod: Error loading PATH: invalid or missing program image, No such file or directory
+
+3. Module Context Analysis:
+  **Anomaly Log Must Satisfy One Of The Following Classes:**
+  1. Application Errors(RAS APP FATAL):
+    - Application Child Process Error: There is no child processes when creating node map.
+    - Application I/O Operation Error: Input/output error in chdir.
+    - Application Stream Read Error: Failed to read message prefix.
+    - Application Connection Reset Error: Connection reset by peer when reading message prefix.
+    - Application Link Severance Error: Link has been severed when reading message prefix.
+    - Application Connection Timeout Error: Connection timed out when reading message prefix.
+  2. Kernel Errors(RAS KERNEL FATAL):
+    - Kernel Data TLB Error: data TLB error interrupt.
+    - Kernel Storage Error: data storage interrupt.
+    - Kernel Filesystem Mount Error: Lustre mount FAILED.
+    - Kernel Packet Reception Error: Error receiving packet on tree network, type mismatch.
+    - Kernel Real-Time System Panic: rts panic.
+    - Kernel Termination Error: Kernel terminated for some reason.
+
+After completing the analysis, you only need to output Yes/No to indicate whether the log is abnormal. **DO NOT OUTPUT THE ANALYSIS.**<|im_end|><|im_start|>user<|im_sep|>New logs are as follows:
 {log}
-<|end|>
-<|assistant|>"""
-prompt_with_rag = """<|system|>
-You are an anomaly detector in a log system. Analyze each log entry as normal or abnormal. You must choose one word in 'yes' or 'no' as the result. 'yes' means something failed or interrupted now. 'no' describes a process work normally or a normal state.
-<|end|>
-<|user|>
-New logs are as follows:
-{log}
-You can refer to the following information for judgment:
-{db_response}
-<|end|>
-<|assistant|>"""
+You must refer to the following ground-truth information for judgment:
+{db_response}<|im_end|><|im_start|>assistant<|im_sep|>"""
 
 # Count the number of logs we total loaded.
 total_log_count = 1
@@ -69,7 +113,7 @@ vectorDatabase = VectorDatabase(db_dir=CHROMA_DB_DIR, collection_name=COLLECTION
 def once_chat_to_llm(log):
     global total_log_count
 
-    db_response = vectorDatabase.query(log)
+    db_response = vectorDatabase.query(log, n_results=1)
 
     if db_response != "":
         user_input = {"log": log, "db_response": db_response}
