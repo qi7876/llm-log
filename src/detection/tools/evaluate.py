@@ -1,10 +1,3 @@
-import os
-import sys
-import getopt
-
-# Change the working directory to the script's directory
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
-
 """evaluate.py
 
 This module is used to evaluate the accuracy and recall of the LogLLM.
@@ -23,6 +16,13 @@ Error:
 
 @author: qi7876
 """
+import os
+import sys
+import getopt
+
+# Change the working directory to the script's directory
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
 
 def validateFiles(ground_truth_file, prediction_file):
     """Validate if files exist and are readable."""

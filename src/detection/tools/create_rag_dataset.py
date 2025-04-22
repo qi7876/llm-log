@@ -1,10 +1,3 @@
-import chromadb
-import os
-import shutil
-from datetime import datetime
-import uuid
-
-
 def create_rag_dataset(origin_dataset_path, processed_dataset_path):
     with open(origin_dataset_path, "r") as o, open(processed_dataset_path, "w") as p:
         for line in o:
@@ -19,7 +12,7 @@ def create_rag_dataset(origin_dataset_path, processed_dataset_path):
 
 if __name__ == "__main__":
     line_num_file = "./line_num.txt"
-    original_dataset = "../dataset/BGL/BGL_2k.log"
+    original_dataset = "../../../dataset/BGL/BGL_2k.log"
     new_dataset = "./BGL_extracted.log"
     processed = "rag_dataset.txt"
 
@@ -40,10 +33,12 @@ if __name__ == "__main__":
         for line in extracted_lines:
             parts = line.split(" ")
             new_line = parts[0] + " " + " ".join(parts[6:])
+
+            # Deduplicate
             if new_line not in new_lines:
                 output.write(new_line)
                 new_lines.append(new_line)
 
-    print(f"Extraction complete. {len(extracted_lines)} lines extracted to {new_dataset}")
+    print(f"Extraction complete. {len(new_lines)} lines extracted to {new_dataset}")
 
     create_rag_dataset(new_dataset, processed)

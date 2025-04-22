@@ -1,10 +1,10 @@
 # For this project
-models
-dataset
+models/
+dataset/
 output.txt
 hf_cache
 responses/
-chroma_db
+chroma_db/
 line_num.txt
 rag_dataset.txt
 BGL_extracted.log
