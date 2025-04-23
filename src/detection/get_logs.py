@@ -32,7 +32,7 @@ def get_logs(dataset_name: str):
                         break
 
                     parts = line.split(" ")
-                    new_line = " ".join(parts[6:])
+                    new_line = " ".join(parts[7:])
 
                     log_list.append(new_line)
                     log_count += 1

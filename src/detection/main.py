@@ -10,7 +10,7 @@ from get_logs import get_logs
 import tomli
 import time
 
-with open("./configs/config_phi-4_BGL.toml", "rb") as file:
+with open("./configs/config_phi-4_Thunderbird.toml", "rb") as file:
     config = tomli.load(file)
 
 # Debug related

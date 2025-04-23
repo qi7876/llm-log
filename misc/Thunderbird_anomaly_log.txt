@@ -1,0 +1,18 @@
+N_PBS_BFD2 1125558000 2005.09.01 ln215 Sep 1 00:00:00 ln215/ln215 pbs_mom: Bad file descriptor (9) in wait_request, select failed
+N_PBS_BFD2 1125558000 2005.09.01 ln215 Sep 1 00:00:00 ln215/ln215 pbs_mom: Bad file descriptor (9) in wait_request, select failed
+N_PBS_BFD2 1125558000 2005.09.01 ln215 Sep 1 00:00:00 ln215/ln215 pbs_mom: Bad file descriptor (9) in wait_request, select failed
+N_PBS_CHK 1125580591 2005.09.01 ln201 Sep 1 06:16:31 ln201/ln201 pbs_mom: task_check, cannot tm_reply to 70789.ladmin2 task 1
+N_PBS_PRE 1125592795 2005.09.01 ln18 Sep 1 09:39:55 ln18/ln18 pbs_mom: im_eof, Premature end of message from addr 172.30.1.94:15003
+N_PBS_PRE 1125592795 2005.09.01 ln18 Sep 1 09:39:55 ln18/ln18 pbs_mom: im_eof, Premature end of message from addr 172.30.1.95:15003
+N_PBS_U09 1125620518 2005.09.01 ln168 Sep 1 17:21:58 ln168/ln168 pbs_mom: Unknown error 15009 (15009) in job_start_error from node 172.30.1.19:15003, 71910.ladmin2
+N_PBS_U09 1125669702 2005.09.02 ln17 Sep 2 07:01:42 ln17/ln17 pbs_mom: Unknown error 15009 (15009) in abort attempted 16 times. ignoring abort request from node 172.30.1.117:15003, 71897.ladmin2
+N_PBS_BAIL 1125761927 2005.09.03 ln127 Sep 3 08:38:47 ln127/ln127 pbs_mom: node_bailout, 72302.ladmin2 POLL failed from node ln111 3)
+R_GM_PAR4 1125838985 2005.09.04 ln50 Sep 4 06:03:05 ln50/ln50 kernel: GM: firmware error-46:SRAM parity error on NIC
+R_GM_LANAI 1126045712 2005.09.06 liberty1p Sep 6 15:28:32 liberty1p/liberty1p kernel: GM: LANai is not running. Allowing port=0 open for debugging
+N_CALL_TR 1126128316 2005.09.07 ln1 Sep 7 14:25:16 ln1/ln1 kernel: Call Trace: [<c022fa29>] net_rx_action [kernel] 0x99 (0xf56c7bc0)
+N_CALL_TR 1126128319 2005.09.07 ln1 Sep 7 14:25:19 ln1/ln1 kernel: Call Trace: [<c0158d54>] __alloc_pages [kernel] 0xb4 (0xc37e3e8c)
+N_CALL_TR 1126128319 2005.09.07 ln1 Sep 7 14:25:19 ln1/ln1 kernel: Call Trace: [<c0158d54>] __alloc_pages [kernel] 0xb4 (0xf750beac)
+N_NFS 1126131641 2005.09.07 ln1 Sep 7 15:20:41 ln1/ln1 netfs: Mounting NFS filesystems: failed
+N_NFS 1126131851 2005.09.07 ln1 Sep 7 15:24:11 ln1/ln1 netfs: Mounting NFS filesystems: failed
+R_EXT_CCISS 1126138756 2005.09.07 ln90 Sep 7 17:19:16 ln90/ln90 kernel: cciss: cmd c5300000 has CHECK CONDITION, sense key = 0x3
+N_AUTH 1126550963 2005.09.12 ln17 Sep 12 11:49:23 ln17/ln17 su(pam_unix)[6414]: authentication failure; logname= uid=4442 euid=0 tty= ruser=#200# rhost=
