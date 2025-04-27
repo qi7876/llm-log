@@ -10,7 +10,7 @@ from get_logs import get_logs
 import tomli
 import time
 
-with open("./configs/config_phi-4_Thunderbird.toml", "rb") as file:
+with open("./configs/config_phi-4_liberty2.toml", "rb") as file:
     config = tomli.load(file)
 
 # Debug related
@@ -48,12 +48,21 @@ logLLM = LogLLM(
 # Load the vector database for RAG.
 vectorDatabase = VectorDatabase(db_dir=CHROMA_DB_DIR, collection_name=COLLECTION_NAME)
 
+def pretty_db_response(db_response):
+    if db_response.startswith("- "):
+        db_response = "This is a normal log: " + db_response[2:]
+    else:
+        first_space_index = db_response.find(' ')
+        db_response = "This is a anomaly log: " + db_response[first_space_index + 1:]
+    return db_response
+
 counter = 1
 
 def chat_to_llm(log):
     global counter
 
     db_response = vectorDatabase.query(log, n_results=1)
+    db_response = pretty_db_response(db_response)
 
     if db_response != "":
         user_input = {"log": log, "db_response": db_response}

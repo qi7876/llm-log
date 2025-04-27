@@ -8,7 +8,7 @@ def get_anomaly_logs(dataset_path, new_dataset_path):
 
 
 if __name__ == '__main__':
-    dataset_path = "../dataset/Thunderbird/Thunderbird.log.sub.key_event"
-    new_dataset_path = "./Thunderbird_anomaly_log.txt"
+    dataset_path = "../dataset/liberty2/liberty2.sub.key_event"
+    new_dataset_path = "./liberty2_anomaly_log.txt"
 
     get_anomaly_logs(dataset_path, new_dataset_path)
