@@ -1,6 +1,6 @@
 # 🤖llm-log
 
-> Still WIP. Be care of breaking changes.
+> Still WIP. Be careful of breaking changes.
 
 ## 📄Introduction
 

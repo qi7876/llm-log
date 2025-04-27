@@ -1,0 +1,18 @@
+N_PBS_BFD2 pbs_mom: Bad file descriptor (9) in wait_request, select failed
+N_PBS_CHK pbs_mom: task_check, cannot tm_reply to 70789.ladmin2 task 1
+N_PBS_PRE pbs_mom: im_eof, Premature end of message from addr <IP>:<Port>
+N_PBS_U09 pbs_mom: Unknown error 15009 (15009) in job_start_error from node <IP>:<Port>, 71910.ladmin2
+N_PBS_U09 pbs_mom: Unknown error 15009 (15009) in abort attempted 16 times. ignoring abort request from node <IP>:<Port>, 71897.ladmin2
+N_PBS_BAIL pbs_mom: node_bailout, 72302.ladmin2 POLL failed from node ln111 3)
+R_GM_PAR4 kernel: GM: firmware error-46:SRAM parity error on NIC
+R_GM_LANAI kernel: GM: LANai is not running. Allowing port=0 open for debugging
+- sshd(pam_unix)[8303]: authentication failure; logname= uid=0 euid=0 tty=NODEVssh ruser= rhost=liberty4p
+- pbs_mom: Unknown error 15059 (15059) in job_start_error from node ln88, 71819.ladmin2
+- pbs_mom: im_eof, End of File from addr 172.30.1.117:1023
+- kernel: GM: LANAI[0]: LANai detected a PARITY error in board SRAM at rtc time = 0x1f0604190d
+- kernel: GM: NIC firmware error: GM aborted
+- sudo(pam_unix)[29990]: authentication failure; logname=#350# uid=0 euid=0 tty=pts/12 ruser= rhost=
+- kernel: GM: gm_exit() called in the kernel: GM aborted<4>GM: NOTICE: drivers/gm_lanai_command.c:81:gm_lanai_command_report_error():kernel
+- kernel: GM: Could not open port because LANai is not running.
+- pbs_mom: Broken pipe (32) in tm_request, comm failed No error
+- netfs: Mounting NFS filesystems: succeeded

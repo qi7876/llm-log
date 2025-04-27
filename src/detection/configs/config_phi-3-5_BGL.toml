@@ -84,4 +84,3 @@ collection_name = "documents"
 [dataset]
 dataset_name = "BGL"
 dataset_path = "../dataset/BGL/BGL_2k.log"
-num_max_logs = 2000

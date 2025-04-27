@@ -9,7 +9,7 @@ from database import VectorDatabase
 import tomli
 import time
 
-with open("./configs/config_phi-4_liberty2.toml", "rb") as file:
+with open("./configs/config_phi-4_liberty2_test.toml", "rb") as file:
     config = tomli.load(file)
 
 # Debug related
@@ -30,7 +30,6 @@ COLLECTION_NAME = config["rag"].get("collection_name", "documents")
 # Dataset related
 DATASET_NAME = config["dataset"].get("dataset_name", "")
 DATASET_PATH = config["dataset"].get("dataset_path", "")
-NUM_MAX_LOGS = config["dataset"].get("num_max_logs", 1000)
 
 def get_logs(dataset_name: str, dataset_path: str):
     logs = []
@@ -74,8 +73,8 @@ if __name__ == "__main__":
 
     # Start the main loop.
     try:
+        counter = 1
         for log in log_list:
-            counter = 1
             db_response = vectorDatabase.query(log, n_results=1)
             db_response = pretty_db_response(db_response)
 

@@ -1,5 +1,5 @@
 line_num_file = "./line_num.txt"
-original_dataset = "../../../dataset/liberty2/liberty2.sub.key_event"
+original_dataset = "../../../dataset/liberty2/liberty2-test.sub.key_event"
 original_dataset_name = "liberty2" # BGL, Thunderbird, liberty2
 new_dataset = "./extracted.log"
 

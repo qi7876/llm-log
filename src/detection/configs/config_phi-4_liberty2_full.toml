@@ -61,4 +61,3 @@ collection_name = "documents"
 [dataset]
 dataset_name = "liberty2"
 dataset_path = "../../dataset/liberty2/liberty2.sub.key_event"
-num_max_logs = 2205
