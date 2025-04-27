@@ -6,7 +6,7 @@
 
 We want to apply LLM to anomaly detection in logs.
 
-## Project Structure
+## 📇Project Structure
 
 ```
 .
