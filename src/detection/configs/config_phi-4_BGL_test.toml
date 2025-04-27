@@ -83,4 +83,4 @@ collection_name = "documents"
 
 [dataset]
 dataset_name = "BGL"
-dataset_path = "../../dataset/BGL/BGL_2k.log"
+dataset_path = "../../dataset/BGL/BGL_2k-test.log"

@@ -5,14 +5,12 @@ This module is used to test the LogLLM.
 """
 
 from model import LogLLM
-from database import VectorDatabase
-from evaluate import calculate_accuracy_and_recall
-from create_database import create_database
+from vector_database import VectorDatabase
 import my_utils
 import tomli
 import time
 
-with open("./configs/config_phi-4_liberty2_test.toml", "rb") as file:
+with open("./configs/config_phi-4_BGL_test.toml", "rb") as file:
     config = tomli.load(file)
 
 # Debug related
@@ -38,7 +36,7 @@ DATASET_PATH = config["dataset"].get("dataset_path", "")
 PREDICTION_FILE_PATH = "./results/output.txt"
 LINE_NUM_FILE_PATH = "./results/line_num.txt"
 EXTRACTED_DATASET_PATH = "./results/extracted_dataset.txt"
-RAG_DATASET_PATH = "./rag_dataset/phi-4_liberty2_test.txt"
+RAG_DATASET_PATH = "./rag_dataset/phi-4_BGL_test.txt"
 
 
 def get_logs(dataset_name: str, dataset_path: str):
@@ -67,7 +65,7 @@ def pretty_db_response(response):
 
 if __name__ == "__main__":
     my_utils.empty_directory_pathlib(CHROMA_DB_DIR)
-    create_database(RAG_DATASET_PATH, CHROMA_DB_DIR, COLLECTION_NAME)
+    my_utils.create_database(RAG_DATASET_PATH, CHROMA_DB_DIR, COLLECTION_NAME)
 
     # Load the dataset.
     log_list = get_logs(DATASET_NAME, DATASET_PATH)
@@ -113,7 +111,7 @@ if __name__ == "__main__":
 
     print("Time cost: ", end_time - start_time)
 
-    results = calculate_accuracy_and_recall(DATASET_PATH, PREDICTION_FILE_PATH, LINE_NUM_FILE_PATH)
+    results = my_utils.calculate_accuracy_and_recall(DATASET_PATH, PREDICTION_FILE_PATH, LINE_NUM_FILE_PATH)
 
     if results:
         print("\nResults:")
