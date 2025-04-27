@@ -6,10 +6,13 @@ This module is used to test the LogLLM.
 
 from model import LogLLM
 from database import VectorDatabase
+from evaluate import calculate_accuracy_and_recall
+from create_database import create_database
+import my_utils
 import tomli
 import time
 
-with open("./configs/config_phi-4_liberty2.toml", "rb") as file:
+with open("./configs/config_phi-4_liberty2_test.toml", "rb") as file:
     config = tomli.load(file)
 
 # Debug related
@@ -30,21 +33,28 @@ COLLECTION_NAME = config["rag"].get("collection_name", "documents")
 # Dataset related
 DATASET_NAME = config["dataset"].get("dataset_name", "")
 DATASET_PATH = config["dataset"].get("dataset_path", "")
-NUM_MAX_LOGS = config["dataset"].get("num_max_logs", 1000)
+
+# misc
+PREDICTION_FILE_PATH = "./results/output.txt"
+LINE_NUM_FILE_PATH = "./results/line_num.txt"
+EXTRACTED_DATASET_PATH = "./results/extracted_dataset.txt"
+RAG_DATASET_PATH = "./rag_dataset/phi-4_liberty2_test.txt"
+
 
 def get_logs(dataset_name: str, dataset_path: str):
     logs = []
-    with open(dataset_path, "r") as dataset:
-        for line in dataset:
-            parts = line.split(" ")
+    with open(dataset_path, "r") as raw_dataset:
+        for line in raw_dataset:
+            log_parts = line.split(" ")
             if dataset_name == "BGL":
-                new_line = " ".join(parts[6:])
+                processed_log = " ".join(log_parts[6:])
             elif dataset_name == "Thunderbird":
-                new_line = " ".join(parts[7:])
+                processed_log = " ".join(log_parts[7:])
             elif dataset_name == "liberty2":
-                new_line = " ".join(parts[8:])
-            logs.append(new_line)
+                processed_log = " ".join(log_parts[8:])
+            logs.append(processed_log)
     return logs
+
 
 def pretty_db_response(response):
     if response.startswith("- "):
@@ -54,28 +64,32 @@ def pretty_db_response(response):
         response = "This is a anomaly log: " + response[first_space_index + 1:]
     return response
 
-# Load the dataset.
-log_list = get_logs(DATASET_NAME, DATASET_PATH)
-
-# Create an instance of LogLLM.
-logLLM = LogLLM(
-    model_path=MODEL_PATH,
-    num_max_content_tokens=NUM_MAX_CONTENT_TOKENS,
-    num_gpu_layers=NUM_GPU_LAYERS,
-    verbose=VERBOSE,
-)
-
-# Load the vector database for RAG.
-vectorDatabase = VectorDatabase(db_dir=CHROMA_DB_DIR, collection_name=COLLECTION_NAME)
-
 
 if __name__ == "__main__":
+    my_utils.empty_directory_pathlib(CHROMA_DB_DIR)
+    create_database(RAG_DATASET_PATH, CHROMA_DB_DIR, COLLECTION_NAME)
+
+    # Load the dataset.
+    log_list = get_logs(DATASET_NAME, DATASET_PATH)
+
+    # Create an instance of LogLLM.
+    logLLM = LogLLM(
+        model_path=MODEL_PATH,
+        num_max_content_tokens=NUM_MAX_CONTENT_TOKENS,
+        num_gpu_layers=NUM_GPU_LAYERS,
+        verbose=VERBOSE,
+    )
+
+    # Load the vector database for RAG.
+    vectorDatabase = VectorDatabase(db_dir=CHROMA_DB_DIR, collection_name=COLLECTION_NAME)
+
+    my_utils.empty_directory_pathlib("./results")
     start_time = time.time()
 
     # Start the main loop.
     try:
+        counter = 1
         for log in log_list:
-            counter = 1
             db_response = vectorDatabase.query(log, n_results=1)
             db_response = pretty_db_response(db_response)
 
@@ -86,7 +100,7 @@ if __name__ == "__main__":
                 user_input = {"log": log}
                 output = logLLM.chat(PROMPT_WITHOUT_RAG, user_input)
 
-            with open("./tools/output.txt", "a") as f:
+            with open(PREDICTION_FILE_PATH, "a") as f:
                 f.write(str(counter) + output + "\n")
 
             counter += 1
@@ -98,3 +112,52 @@ if __name__ == "__main__":
     end_time = time.time()
 
     print("Time cost: ", end_time - start_time)
+
+    results = calculate_accuracy_and_recall(DATASET_PATH, PREDICTION_FILE_PATH, LINE_NUM_FILE_PATH)
+
+    if results:
+        print("\nResults:")
+        print(f"Precision: {results['precision']:.4f}")
+        print(f"Recall: {results['recall']:.4f}")
+        print(f"F1 Score: {results['f1_score']:.4f}")
+        print("\nDetailed Statistics:")
+        print(f"True Positives: {results['true_positives']}")
+        print(f"True Negatives: {results['true_negatives']}")
+        print(f"False Positives: {results['false_positives']}")
+        print(f"False Negatives: {results['false_negatives']}")
+        if results['invalid_lines'] > 0:
+            print(f"Invalid Lines: {results['invalid_lines']}")
+    else:
+        print("Evaluation failed. Please check the errors above.")
+
+    with open(LINE_NUM_FILE_PATH, 'r') as line_num, open(DATASET_PATH, 'r') as dataset:
+        # Read all line numbers into a list and convert to integers
+        line_numbers = [int(line.strip()) for line in line_num if line.strip()]
+
+        # Read all lines from the original dataset
+        all_lines = dataset.readlines()
+
+        # Extract the lines corresponding to the line numbers
+        # Note: Line numbers typically start from 1, while list indices start from 0
+        extracted_lines = [all_lines[num - 1] for num in line_numbers if 0 < num <= len(all_lines)]
+
+    # Write the extracted lines to a new dataset file
+    with open(EXTRACTED_DATASET_PATH, 'w') as output:
+        new_lines = []
+        for line in extracted_lines:
+            parts = line.split(" ")
+            if DATASET_NAME == "BGL":
+                new_line = parts[0] + " " + " ".join(parts[6:])
+            elif DATASET_NAME == "Thunderbird":
+                new_line = parts[0] + " " + " ".join(parts[7:])
+            elif DATASET_NAME == "liberty2":
+                new_line = parts[0] + " " + " ".join(parts[8:])
+            else:
+                new_line = line
+
+            # Deduplicate
+            if new_line not in new_lines:
+                output.write(new_line)
+                new_lines.append(new_line)
+
+    print(f"Extraction complete. {len(new_lines)} lines extracted to {EXTRACTED_DATASET_PATH}")

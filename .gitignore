@@ -1,13 +1,9 @@
 # For this project
 models/
 dataset/
-output.txt
-hf_cache
 responses/
 chroma_db/
-line_num.txt
-rag_dataset.txt
-BGL_extracted.log
+results/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -1,7 +1,0 @@
-{
-    "python.testing.pytestArgs": [
-        "prototype"
-    ],
-    "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
-}

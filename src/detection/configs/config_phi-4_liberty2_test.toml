@@ -19,11 +19,6 @@ prompt_without_rag = """<|im_start|>system<|im_sep|>You are an anomaly log detec
   - pbs_mom: node_bailout, 72302.ladmin2 POLL failed from node ln111 3)
   - kernel: GM: firmware error-46:SRAM parity error on NIC
   - kernel: GM: LANai is not running. Allowing port=0 open for debugging
-  - kernel: Call Trace: [<c022fa29>] net_rx_action [kernel] 0x99 (<Memory Address>)
-  - kernel: Call Trace: [<c0158d54>] __alloc_pages [kernel] 0xb4 (<Memory Address>)
-  - netfs: Mounting NFS filesystems: failed
-  - kernel: cciss: cmd c5300000 has CHECK CONDITION, sense key = 0x3
-  - su(pam_unix)[6414]: authentication failure; logname= uid=4442 euid=0 tty= ruser=#200# rhost=
 
 **If a highly similar template is not found above, then this log is normal.**
 
@@ -42,11 +37,6 @@ prompt_with_rag = """<|im_start|>system<|im_sep|>You are an anomaly log detector
   - pbs_mom: node_bailout, 72302.ladmin2 POLL failed from node ln111 3)
   - kernel: GM: firmware error-46:SRAM parity error on NIC
   - kernel: GM: LANai is not running. Allowing port=0 open for debugging
-  - kernel: Call Trace: [<c022fa29>] net_rx_action [kernel] 0x99 (<Memory Address>)
-  - kernel: Call Trace: [<c0158d54>] __alloc_pages [kernel] 0xb4 (<Memory Address>)
-  - netfs: Mounting NFS filesystems: failed
-  - kernel: cciss: cmd c5300000 has CHECK CONDITION, sense key = 0x3
-  - su(pam_unix)[6414]: authentication failure; logname= uid=4442 euid=0 tty= ruser=#200# rhost=
 
 **If a highly similar template is not found above, then this log is normal.**
 
@@ -60,5 +50,4 @@ collection_name = "documents"
 
 [dataset]
 dataset_name = "liberty2"
-dataset_path = "../../dataset/liberty2/liberty2.sub.key_event"
-num_max_logs = 2205
+dataset_path = "../../dataset/liberty2/liberty2-test.sub.key_event"
