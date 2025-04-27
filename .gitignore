@@ -1,9 +1,8 @@
 # For this project
-models/
-dataset/
-responses/
-chroma_db/
-results/
+/models/
+/dataset/
+/src/chroma_db/
+/src/results/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -182,7 +181,6 @@ cython_debug/
 *.pch
 
 # Compiled Dynamic libraries
-*.so
 *.dylib
 *.dll
 
