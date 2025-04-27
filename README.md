@@ -6,7 +6,7 @@
 
 We want to apply LLM to anomaly detection in logs.
 
-## ⚙️Config
+## ⚙️Config Example
 
 ```toml
 [debug]
@@ -19,73 +19,50 @@ num_gpu_layers = 41
 num_buffer_size = 1
 prompt_without_rag = """<|im_start|>system<|im_sep|>You are an anomaly log detector. Please analyze logs according to the following refined criteria:
 
-1. Log Level Filtering:
-  - INFO level logs or logs with "debug" marked are normal.
-  - WARNING/ERROR/FATAL level logs maybe abnormal. You should analyze the log according to the third part.
+**Logs highly similar to the following template are considered anomalous logs.**
+**You need to compare the logs as a whole, not just make judgments based on certain keywords.**
+**Note: A new log is considered abnormal only when it almost completely matches one of the following templates. During the analysis, differences in certain numerical values between the new log and the template are allowed (for example, the difference between <c022fa29> and <c009d15> is acceptable), but differences in specific parts are absolutely not allowed (for example, the difference between <IP>:<Port> and <a specific name> is unacceptable).**
+  - pbs_mom: Bad file descriptor (9) in wait_request, select failed
+  - pbs_mom: task_check, cannot tm_reply to 70789.ladmin2 task 1
+  - pbs_mom: im_eof, Premature end of message from addr <IP>:<Port>
+  - pbs_mom: Unknown error 15009 (15009) in job_start_error from node <IP>:<Port>, 71910.ladmin2
+  - pbs_mom: Unknown error 15009 (15009) in abort attempted 16 times. ignoring abort request from node <IP>:<Port>, 71897.ladmin2
+  - pbs_mom: node_bailout, 72302.ladmin2 POLL failed from node ln111 3)
+  - kernel: GM: firmware error-46:SRAM parity error on NIC
+  - kernel: GM: LANai is not running. Allowing port=0 open for debugging
+  - kernel: Call Trace: [<c022fa29>] net_rx_action [kernel] 0x99 (<Memory Address>)
+  - kernel: Call Trace: [<c0158d54>] __alloc_pages [kernel] 0xb4 (<Memory Address>)
+  - netfs: Mounting NFS filesystems: failed
+  - kernel: cciss: cmd c5300000 has CHECK CONDITION, sense key = 0x3
+  - su(pam_unix)[6414]: authentication failure; logname= uid=4442 euid=0 tty= ruser=#200# rhost=
 
-2. Special cases:
-  **The Cases Below should not be detected to anomaly log.**
-  - RAS APP FATAL ciod: Error loading PATH: invalid or missing program image, Permission denied.
-  - RAS APP FATAL ciod: Error loading PATH: invalid or missing program image, No such file or directory
-  - RAS APP FATAL ciod: Error loading PATH: invalid or missing program image, Exec format error
-  - RAS APP FATAL ciod: LOGIN chdir(PATH or pwd) failed: No such file or directory
-  - RAS KERNEL INFO ciod: Missing or invalid fields on line 1 of node map file PATH
-  - RAS MMCS ERROR idoproxydb hit ASSERT condition: ASSERT expression=0 Source file=idotransportmgr.cpp Source line=1043 Function=int IdoTransportMgr::SendPacket(IdoUdpMgr*, BglCtlPavTrace*)
-
-3. Module Context Analysis:
-  **Anomaly Log Must Satisfy One Of The Following Classes:**
-  1. Application Errors(RAS APP FATAL):
-    - Application Child Process Error: There is no child processes when creating node map.
-    - Application I/O Operation Error: Input/output error in chdir.
-    - Application Stream Read Error: Failed to read message prefix.
-    - Application Connection Reset Error: Connection reset by peer when reading message prefix.
-    - Application Link Severance Error: Link has been severed when reading message prefix.
-    - Application Connection Timeout Error: Connection timed out when reading message prefix.
-  2. Kernel Errors(RAS KERNEL FATAL):
-    - Kernel Data TLB Error: data TLB error interrupt.
-    - Kernel Storage Error: data storage interrupt.
-    - Kernel Filesystem Mount Error: Lustre mount FAILED.
-    - Kernel Packet Reception Error: Error receiving packet on tree network, type mismatch.
-    - Kernel Real-Time System Panic: rts panic.
-    - Kernel Termination Error: Kernel terminated for some reason.
+**If a highly similar template is not found above, then this log is normal.**
 
 After completing the analysis, you only need to output Yes/No to indicate whether the log is abnormal. **DO NOT OUTPUT THE ANALYSIS.**<|im_end|><|im_start|>user<|im_sep|>New logs are as follows:
 {log}<|im_end|><|im_start|>assistant<|im_sep|>"""
 prompt_with_rag = """<|im_start|>system<|im_sep|>You are an anomaly log detector. Please analyze logs according to the following refined criteria:
 
-1. Log Level Filtering:
-  - INFO level logs or logs with "debug" marked are normal.
-  - WARNING/ERROR/FATAL level logs maybe abnormal. You should analyze the log according to the third part.
+**Logs highly similar to the following template are considered anomalous logs.**
+**You need to compare the logs as a whole, not just make judgments based on certain keywords.**
+**Note: A new log is considered abnormal only when it almost completely matches one of the following templates. During the analysis, differences in certain numerical values between the new log and the template are allowed (for example, the difference between <c022fa29> and <c009d15> is acceptable), but differences in specific parts are absolutely not allowed (for example, the difference between <IP>:<Port> and <a specific name> is unacceptable).**
+  - pbs_mom: Bad file descriptor (9) in wait_request, select failed
+  - pbs_mom: task_check, cannot tm_reply to 70789.ladmin2 task 1
+  - pbs_mom: im_eof, Premature end of message from addr <IP>:<Port>
+  - pbs_mom: Unknown error 15009 (15009) in job_start_error from node <IP>:<Port>, 71910.ladmin2
+  - pbs_mom: Unknown error 15009 (15009) in abort attempted 16 times. ignoring abort request from node <IP>:<Port>, 71897.ladmin2
+  - pbs_mom: node_bailout, 72302.ladmin2 POLL failed from node ln111 3)
+  - kernel: GM: firmware error-46:SRAM parity error on NIC
+  - kernel: GM: LANai is not running. Allowing port=0 open for debugging
+  - kernel: Call Trace: [<c022fa29>] net_rx_action [kernel] 0x99 (<Memory Address>)
+  - kernel: Call Trace: [<c0158d54>] __alloc_pages [kernel] 0xb4 (<Memory Address>)
+  - netfs: Mounting NFS filesystems: failed
+  - kernel: cciss: cmd c5300000 has CHECK CONDITION, sense key = 0x3
+  - su(pam_unix)[6414]: authentication failure; logname= uid=4442 euid=0 tty= ruser=#200# rhost=
 
-2. Special cases:
-  **The Cases Below should not be detected to anomaly log.**
-  - RAS APP FATAL ciod: Error loading PATH: invalid or missing program image, Permission denied.
-  - RAS APP FATAL ciod: Error loading PATH: invalid or missing program image, No such file or directory
-  - RAS APP FATAL ciod: Error loading PATH: invalid or missing program image, Exec format error
-  - RAS APP FATAL ciod: LOGIN chdir(PATH or pwd) failed: No such file or directory
-  - RAS KERNEL INFO ciod: Missing or invalid fields on line 1 of node map file PATH
-  - RAS MMCS ERROR idoproxydb hit ASSERT condition: ASSERT expression=0 Source file=idotransportmgr.cpp Source line=1043 Function=int IdoTransportMgr::SendPacket(IdoUdpMgr*, BglCtlPavTrace*)
-
-3. Module Context Analysis:
-  **Anomaly Log Must Satisfy One Of The Following Classes:**
-  1. Application Errors(RAS APP FATAL):
-    - Application Child Process Error: There is no child processes when creating node map.
-    - Application I/O Operation Error: Input/output error in chdir.
-    - Application Stream Read Error: Failed to read message prefix.
-    - Application Connection Reset Error: Connection reset by peer when reading message prefix.
-    - Application Link Severance Error: Link has been severed when reading message prefix.
-    - Application Connection Timeout Error: Connection timed out when reading message prefix.
-  2. Kernel Errors(RAS KERNEL FATAL):
-    - Kernel Data TLB Error: data TLB error interrupt.
-    - Kernel Storage Error: data storage interrupt.
-    - Kernel Filesystem Mount Error: Lustre mount FAILED.
-    - Kernel Packet Reception Error: Error receiving packet on tree network, type mismatch.
-    - Kernel Real-Time System Panic: rts panic.
-    - Kernel Termination Error: Kernel terminated for some reason.
+**If a highly similar template is not found above, then this log is normal.**
 
 After completing the analysis, you only need to output Yes/No to indicate whether the log is abnormal. **DO NOT OUTPUT THE ANALYSIS.**<|im_end|><|im_start|>user<|im_sep|>New logs are as follows:
-{log}
-You must refer to the following ground-truth information for judgment:
+{log}You could refer to the following ground-truth information for judgment:
 {db_response}<|im_end|><|im_start|>assistant<|im_sep|>"""
 
 [rag]
@@ -93,8 +70,7 @@ chroma_db_dir = "chroma_db"
 collection_name = "documents"
 
 [dataset]
-dataset_name = "BGL"
-dataset_path = "../../dataset/BGL/BGL_2k.log"
-num_max_logs = 2000
+dataset_name = "liberty2"
+dataset_path = "../../dataset/liberty2/liberty2.sub.key_event"
 ```
 
