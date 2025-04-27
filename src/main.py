@@ -81,7 +81,7 @@ if __name__ == "__main__":
     # Load the vector database for RAG.
     vectorDatabase = VectorDatabase(db_dir=CHROMA_DB_DIR, collection_name=COLLECTION_NAME)
 
-    my_utils.empty_directory_pathlib("../results")
+    my_utils.empty_directory_pathlib("results")
     start_time = time.time()
 
     # Start the main loop.
