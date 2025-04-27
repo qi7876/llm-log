@@ -3,7 +3,7 @@ verbose = false
 
 [model]
 model_path = "../../models/phi-4-Q6_K.gguf"
-num_max_content_tokens = 8192
+num_max_content_tokens = 16384
 num_gpu_layers = 41
 num_buffer_size = 1
 prompt_without_rag = """<|im_start|>system<|im_sep|>You are an anomaly log detector. Please analyze logs according to the following refined criteria:

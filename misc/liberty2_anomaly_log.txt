@@ -1,0 +1,18 @@
+N_PBS_BFD2 ln215/ln215 pbs_mom: Bad file descriptor (9) in wait_request, select failed
+N_PBS_BFD2 ln215/ln215 pbs_mom: Bad file descriptor (9) in wait_request, select failed
+N_PBS_BFD2 ln215/ln215 pbs_mom: Bad file descriptor (9) in wait_request, select failed
+N_PBS_CHK ln201/ln201 pbs_mom: task_check, cannot tm_reply to 70789.ladmin2 task 1
+N_PBS_PRE ln18/ln18 pbs_mom: im_eof, Premature end of message from addr 172.30.1.94:15003
+N_PBS_PRE ln18/ln18 pbs_mom: im_eof, Premature end of message from addr 172.30.1.95:15003
+N_PBS_U09 ln168/ln168 pbs_mom: Unknown error 15009 (15009) in job_start_error from node 172.30.1.19:15003, 71910.ladmin2
+N_PBS_U09 ln17/ln17 pbs_mom: Unknown error 15009 (15009) in abort attempted 16 times. ignoring abort request from node 172.30.1.117:15003, 71897.ladmin2
+N_PBS_BAIL ln127/ln127 pbs_mom: node_bailout, 72302.ladmin2 POLL failed from node ln111 3)
+R_GM_PAR4 ln50/ln50 kernel: GM: firmware error-46:SRAM parity error on NIC
+R_GM_LANAI liberty1p/liberty1p kernel: GM: LANai is not running. Allowing port=0 open for debugging
+N_CALL_TR ln1/ln1 kernel: Call Trace: [<c022fa29>] net_rx_action [kernel] 0x99 (0xf56c7bc0)
+N_CALL_TR ln1/ln1 kernel: Call Trace: [<c0158d54>] __alloc_pages [kernel] 0xb4 (0xc37e3e8c)
+N_CALL_TR ln1/ln1 kernel: Call Trace: [<c0158d54>] __alloc_pages [kernel] 0xb4 (0xf750beac)
+N_NFS ln1/ln1 netfs: Mounting NFS filesystems: failed
+N_NFS ln1/ln1 netfs: Mounting NFS filesystems: failed
+R_EXT_CCISS ln90/ln90 kernel: cciss: cmd c5300000 has CHECK CONDITION, sense key = 0x3
+N_AUTH ln17/ln17 su(pam_unix)[6414]: authentication failure; logname= uid=4442 euid=0 tty= ruser=#200# rhost=

@@ -65,7 +65,7 @@ def create_database(
     return db_dir
 
 if __name__ == "__main__":
-    file_path = "../rag_dataset/phi-4_BGL.txt"
+    file_path = "../rag_dataset/phi-4_liberty2.txt"
     chroma_db_dir = "../chroma_db"
     collection_name = "documents"
     backup = False
