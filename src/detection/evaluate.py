@@ -16,34 +16,9 @@ Error:
 
 @author: qi7876
 """
-import os
-
-
-def validate_files(ground_truth_file, prediction_file):
-    """Validate if files exist and are readable."""
-    if not os.path.exists(ground_truth_file):
-        print(f"Error: Ground truth file not found: {ground_truth_file}")
-        return False
-
-    if not os.path.exists(prediction_file):
-        print(f"Error: Prediction file not found: {prediction_file}")
-        return False
-
-    if not os.access(ground_truth_file, os.R_OK):
-        print(f"Error: Cannot read ground truth file: {ground_truth_file}")
-        return False
-
-    if not os.access(prediction_file, os.R_OK):
-        print(f"Error: Cannot read prediction file: {prediction_file}")
-        return False
-
-    return True
 
 
 def calculate_accuracy_and_recall(ground_truth_file, prediction_file, line_num_file):
-    if not validate_files(ground_truth_file, prediction_file):
-        return None
-
     counter = 1
     try:
         with open(ground_truth_file, "r") as f_gt, open(prediction_file, "r") as f_pred:
@@ -153,7 +128,8 @@ def calculate_accuracy_and_recall(ground_truth_file, prediction_file, line_num_f
                 )
             except ZeroDivisionError:
                 print("Error calculating metrics: Division by zero.")
-                return None
+                results = {"precision": 0, "recall": 0, "f1_score": 0}
+                return results
 
             results = {"precision": precision, "recall": recall, "f1_score": f1_score}
 
@@ -169,15 +145,6 @@ def calculate_accuracy_and_recall(ground_truth_file, prediction_file, line_num_f
 
             return results
 
-    except UnicodeDecodeError:
-        print("Error: One of the files contains invalid text encoding.")
-        return None
-    except FileNotFoundError as e:
-        print(f"Error: File not found - {e}")
-        return None
-    except PermissionError as e:
-        print(f"Error: Permission denied when accessing files - {e}")
-        return None
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         return None
