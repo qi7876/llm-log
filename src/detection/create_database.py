@@ -1,14 +1,11 @@
 import chromadb
 import os
-import shutil
-from datetime import datetime
 import uuid
 
 def create_database(
     file_path: str,
     db_dir: str = "chroma_db",
-    collection_name: str = "documents",
-    backup: bool = True,
+    collection_name: str = "documents"
 ) -> str:
     """
     Create a vector database from a local file.
@@ -22,13 +19,6 @@ def create_database(
     Returns:
         Path to the created database
     """
-    # Backup if needed
-    if os.path.exists(db_dir) and backup:
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        backup_dir = f"{db_dir}_backup_{timestamp}"
-        shutil.copytree(db_dir, backup_dir)
-        print(f"Backup the old database to {backup_dir}")
-        
     # Create client
     client = chromadb.PersistentClient(path=db_dir)
     
@@ -65,9 +55,8 @@ def create_database(
     return db_dir
 
 if __name__ == "__main__":
-    file_path = "../rag_dataset/phi-4_liberty2_test.txt"
-    chroma_db_dir = "../chroma_db"
+    file_path = "rag_dataset/phi-4_liberty2_test.txt"
+    chroma_db_dir = "chroma_db"
     collection_name = "documents"
-    backup = False
 
-    create_database(file_path, db_dir=chroma_db_dir, collection_name=collection_name, backup=backup)
+    create_database(file_path, db_dir=chroma_db_dir, collection_name=collection_name)
