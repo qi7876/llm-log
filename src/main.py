@@ -10,7 +10,7 @@ import my_utils
 import tomli
 import time
 
-with open("./configs/config_phi-4_BGL_test.toml", "rb") as file:
+with open("configs/config_phi-4_BGL_test.toml", "rb") as file:
     config = tomli.load(file)
 
 # Debug related
@@ -33,10 +33,10 @@ DATASET_NAME = config["dataset"].get("dataset_name", "")
 DATASET_PATH = config["dataset"].get("dataset_path", "")
 
 # misc
-PREDICTION_FILE_PATH = "./results/output.txt"
-LINE_NUM_FILE_PATH = "./results/line_num.txt"
-EXTRACTED_DATASET_PATH = "./results/extracted_dataset.txt"
-RAG_DATASET_PATH = "./rag_dataset/phi-4_BGL_test.txt"
+PREDICTION_FILE_PATH = "results/output.txt"
+LINE_NUM_FILE_PATH = "results/line_num.txt"
+EXTRACTED_DATASET_PATH = "results/extracted_dataset.txt"
+RAG_DATASET_PATH = "rag_dataset/phi-4_BGL_test.txt"
 
 
 def get_logs(dataset_name: str, dataset_path: str):
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     # Load the vector database for RAG.
     vectorDatabase = VectorDatabase(db_dir=CHROMA_DB_DIR, collection_name=COLLECTION_NAME)
 
-    my_utils.empty_directory_pathlib("./results")
+    my_utils.empty_directory_pathlib("results")
     start_time = time.time()
 
     # Start the main loop.

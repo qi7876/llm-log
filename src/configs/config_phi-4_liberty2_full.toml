@@ -2,7 +2,7 @@
 verbose = false
 
 [model]
-model_path = "../../models/phi-4-Q6_K.gguf"
+model_path = "../models/phi-4-Q6_K.gguf"
 num_max_content_tokens = 8192
 num_gpu_layers = 41
 num_buffer_size = 1
@@ -60,4 +60,4 @@ collection_name = "documents"
 
 [dataset]
 dataset_name = "liberty2"
-dataset_path = "../../dataset/liberty2/liberty2.sub.key_event"
+dataset_path = "../dataset/liberty2/liberty2.sub.key_event"
